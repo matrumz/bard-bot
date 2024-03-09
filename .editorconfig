@@ -2,11 +2,31 @@ root = true
 
 # All files
 [*]
-indent_style = space
+charset = utf-8
+end_of_line = lf
+indent_style = tab
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Json files
+[*.{json,jsonc}]
+indent_size = 2
+
+# Dockerfiles
+[Dockerfile]
+indent_size = 4
+
+# Markdown files
+[*.md]
+indent_size = 4
 
 # Xml files
 [*.xml]
 indent_size = 2
+
+[*.csproj]
+indent_size = 2
+indent_style = space
 
 # C# files
 [*.cs]
@@ -15,11 +35,8 @@ indent_size = 2
 
 # Indentation and spacing
 indent_size = 4
+indent_style = space
 tab_width = 4
-
-# New line preferences
-end_of_line = crlf
-insert_final_newline = false
 
 #### .NET Coding Conventions ####
 [*.{cs,vb}]
