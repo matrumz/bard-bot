@@ -1,0 +1,40 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+{
+	"name": "Bard Bot Devcontainer",
+
+	"build": {
+		"context": "..",
+		"dockerfile": "../Dockerfile",
+		"args": {
+			"DEVCONTAINER_USER_NAME": "dev",
+			"RUNTIME_SDK": "sdk"
+		},
+		"target": "devcontainer"
+	},
+
+	"remoteUser": "dev",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+		"ghcr.io/stuartleeks/dev-container-features/shell-history:0": {}
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"eamodio.gitlens",
+				"EditorConfig.EditorConfig",
+				"ms-dotnettools.csharp",
+				"streetsidesoftware.code-spell-checker"
+			]
+		}
+	},
+
+	"mounts": [
+		{ "source": "${localEnv:HOME}/.gitconfig", "target": "/root/.gitconfig", "type": "bind" },
+		{ "source": "${localEnv:HOME}/.ssh", "target": "/home/dev/.ssh", "type": "bind" }
+	]
+
+}
