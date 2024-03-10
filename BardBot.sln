@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1DB51EB6-2DA3-4ED0-A78B-0999B096EBF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BardBot", "src\BardBot\BardBot.csproj", "{FDBE93D4-6867-43A2-9C0A-EF21AED6A355}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -10,5 +14,14 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDBE93D4-6867-43A2-9C0A-EF21AED6A355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDBE93D4-6867-43A2-9C0A-EF21AED6A355}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDBE93D4-6867-43A2-9C0A-EF21AED6A355}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDBE93D4-6867-43A2-9C0A-EF21AED6A355}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FDBE93D4-6867-43A2-9C0A-EF21AED6A355} = {1DB51EB6-2DA3-4ED0-A78B-0999B096EBF3}
 	EndGlobalSection
 EndGlobal
