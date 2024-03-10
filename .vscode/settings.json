@@ -1,5 +1,9 @@
 {
-    "cSpell.words": [
-        "Devcontainer"
-    ]
+	"cSpell.words": [
+		"Devcontainer"
+	],
+	"files.exclude": {
+		"**/bin/": true,
+		"**/obj/": true
+	}
 }
