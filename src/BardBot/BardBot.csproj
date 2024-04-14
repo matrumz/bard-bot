@@ -10,4 +10,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BardBot.Common\BardBot.Common.csproj" />
+    <ProjectReference Include="..\BardBot.Discord\BardBot.Discord.csproj" />
+  </ItemGroup>
 </Project>
