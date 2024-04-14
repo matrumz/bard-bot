@@ -2,6 +2,7 @@
 	"cSpell.words": [
 		"Devcontainer"
 	],
+	"editor.formatOnSave": true,
 	"files.exclude": {
 		"**/bin/": true,
 		"**/obj/": true
