@@ -7,35 +7,23 @@ namespace BardBot.Discord.Logging.Extensions;
 
 public static class ILoggerExtensions
 {
-    public static Task LogAsync(this ILogger logger, LogMessage message)
+    public async static Task LogAsync(this ILogger logger, LogMessage message)
     {
-        switch (message.Severity)
+        var severity = message.Severity switch
         {
-#pragma warning disable CA2254 // Template should be a static expression
-            case LogSeverity.Verbose:
-                logger.LogTrace(message.Exception, message.Message, message.Source);
-                break;
-            case LogSeverity.Debug:
-                logger.LogDebug(message.Exception, message.Message, message.Source);
-                break;
-            case LogSeverity.Info:
-                logger.LogInformation(message.Exception, message.Message, message.Source);
-                break;
-            case LogSeverity.Warning:
-                logger.LogWarning(message.Exception, message.Message, message.Source);
-                break;
-            case LogSeverity.Error:
-                logger.LogError(message.Exception, message.Message, message.Source);
-                break;
-            case LogSeverity.Critical:
-                logger.LogCritical(message.Exception, message.Message, message.Source);
-                break;
-#pragma warning restore CA2254 // Template should be a static expression
-        }
-        return Task.CompletedTask;
+            LogSeverity.Critical => LogLevel.Critical,
+            LogSeverity.Error => LogLevel.Error,
+            LogSeverity.Warning => LogLevel.Warning,
+            LogSeverity.Info => LogLevel.Information,
+            LogSeverity.Verbose => LogLevel.Trace,
+            LogSeverity.Debug => LogLevel.Debug,
+            _ => LogLevel.Information
+        };
+        logger.Log(logLevel: severity, eventId: new EventId(), state: message, exception: message.Exception, formatter: (msg, _) => msg.Message);
+        await Task.CompletedTask;
     }
 
-    public static Task LogAsync(this ILogger logger, IResult result)
+    public async static Task LogAsync(this ILogger logger, IResult result)
     {
         if (result.IsSuccess)
         {
@@ -45,6 +33,6 @@ public static class ILoggerExtensions
         {
             logger.LogError(result.ToString());
         }
-        return Task.CompletedTask;
+        await Task.CompletedTask;
     }
 }
