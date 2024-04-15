@@ -1,4 +1,5 @@
 using Discord;
+using Discord.Interactions;
 
 using Microsoft.Extensions.Logging;
 
@@ -30,6 +31,19 @@ public static class ILoggerExtensions
                 logger.LogCritical(message.Exception, message.Message, message.Source);
                 break;
 #pragma warning restore CA2254 // Template should be a static expression
+        }
+        return Task.CompletedTask;
+    }
+
+    public static Task LogAsync(this ILogger logger, IResult result)
+    {
+        if (result.IsSuccess)
+        {
+            logger.LogTrace("Interaction completed successfully.", result);
+        }
+        else
+        {
+            logger.LogError("Interaction failed.", result);
         }
         return Task.CompletedTask;
     }

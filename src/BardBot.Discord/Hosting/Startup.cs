@@ -19,6 +19,11 @@ public class Startup : IStartup
             // ...
         };
 
+        var interactionServiceConfig = new InteractionServiceConfig()
+        {
+            DefaultRunMode = RunMode.Async,
+        };
+
         services.AddHostedService<Bot>();
         services.AddOptions<DiscordOptions>()
             .BindConfiguration(DiscordOptions.Discord)

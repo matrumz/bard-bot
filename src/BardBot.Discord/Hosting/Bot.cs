@@ -39,6 +39,7 @@ public class Bot : IHostedService
         DiscordClient.InteractionCreated += OnInteraction;
         DiscordClient.Log += Logger.LogAsync;
         DiscordClient.Ready += () => InteractionService.RegisterCommandsGloballyAsync(deleteMissing: true);
+        InteractionService.InteractionExecuted += InteractionExecuted;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -82,6 +83,46 @@ public class Bot : IHostedService
             if (interaction.Type == InteractionType.ApplicationCommand)
                 await interaction.GetOriginalResponseAsync()
                     .ContinueWith(msg => msg.Result.DeleteAsync());
+        }
+    }
+
+    private async Task InteractionExecuted(ICommandInfo info, IInteractionContext context, IResult result)
+    {
+        if (!result.IsSuccess)
+        {
+            const string seeMaintainerMessage = "There was an issue with this command. Please contact the bot maintainer.";
+            switch (result.Error)
+            {
+                case InteractionCommandError.BadArgs:
+                    await context.Interaction.RespondAsync("Invalid arguments");
+                    break;
+                case InteractionCommandError.ConvertFailed:
+                    await context.Interaction.RespondAsync(seeMaintainerMessage);
+                    _ = Logger.LogAsync(result);
+                    break;
+                case InteractionCommandError.Exception:
+                    await context.Interaction.RespondAsync(seeMaintainerMessage);
+                    _ = Logger.LogAsync(result);
+                    break;
+                case InteractionCommandError.ParseFailed:
+                    await context.Interaction.RespondAsync(seeMaintainerMessage);
+                    _ = Logger.LogAsync(result);
+                    break;
+                case InteractionCommandError.UnknownCommand:
+                    await context.Interaction.RespondAsync("Unknown command");
+                    break;
+                case InteractionCommandError.UnmetPrecondition:
+                    await context.Interaction.RespondAsync($"You do not have permission to run this command: {result.ErrorReason}");
+                    break;
+                case InteractionCommandError.Unsuccessful:
+                    await context.Interaction.RespondAsync(seeMaintainerMessage);
+                    _ = Logger.LogAsync(result);
+                    break;
+            }
+        }
+        else
+        {
+            _ = Logger.LogAsync(result);
         }
     }
 
