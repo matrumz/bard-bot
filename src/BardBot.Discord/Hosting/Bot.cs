@@ -25,6 +25,10 @@ public class Bot : IHostedService
         Client = client;
         Configuration = options.Bot;
         Logger = logger;
+
+        Client.Connected += OnConnected;
+        Client.Disconnected += OnDisconnected;
+        Client.Ready += OnReady;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -46,4 +50,23 @@ public class Bot : IHostedService
 
         Logger.LogInformation("Bot is stopped!");
     }
+
+    private Task OnConnected()
+    {
+        Logger.LogInformation("Bot is connected.");
+        return Task.CompletedTask;
+    }
+
+    private Task OnDisconnected(Exception exception)
+    {
+        Logger.LogError(exception, "Bot is disconnected.");
+        return Task.CompletedTask;
+    }
+
+    private Task OnReady()
+    {
+        Logger.LogInformation("Bot is ready.");
+        return Task.CompletedTask;
+    }
+
 }
