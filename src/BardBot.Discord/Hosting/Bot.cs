@@ -94,29 +94,29 @@ public class Bot : IHostedService
             switch (result.Error)
             {
                 case InteractionCommandError.BadArgs:
-                    await context.Interaction.RespondAsync("Invalid arguments");
+                    await context.Interaction.RespondAsync("Invalid arguments", ephemeral: true);
                     break;
                 case InteractionCommandError.ConvertFailed:
                     _ = Logger.LogAsync(result);
-                    await context.Interaction.RespondAsync(seeMaintainerMessage);
+                    await context.Interaction.RespondAsync(seeMaintainerMessage, ephemeral: true);
                     break;
                 case InteractionCommandError.Exception:
                     _ = Logger.LogAsync(result);
-                    await context.Interaction.RespondAsync(seeMaintainerMessage);
+                    await context.Interaction.RespondAsync(seeMaintainerMessage, ephemeral: true);
                     break;
                 case InteractionCommandError.ParseFailed:
                     _ = Logger.LogAsync(result);
-                    await context.Interaction.RespondAsync(seeMaintainerMessage);
+                    await context.Interaction.RespondAsync(seeMaintainerMessage, ephemeral: true);
                     break;
                 case InteractionCommandError.UnknownCommand:
-                    await context.Interaction.RespondAsync("Unknown command");
+                    await context.Interaction.RespondAsync("Unknown command", ephemeral: true);
                     break;
                 case InteractionCommandError.UnmetPrecondition:
-                    await context.Interaction.RespondAsync($"You do not have permission to run this command: {result.ErrorReason}");
+                    await context.Interaction.RespondAsync($"You do not have permission to run this command: {result.ErrorReason}", ephemeral: true);
                     break;
                 case InteractionCommandError.Unsuccessful:
                     _ = Logger.LogAsync(result);
-                    await context.Interaction.RespondAsync(seeMaintainerMessage);
+                    await context.Interaction.RespondAsync(seeMaintainerMessage, ephemeral: true);
                     break;
             }
         }
