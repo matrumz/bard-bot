@@ -1,6 +1,10 @@
+using System.Reflection;
+
+using BardBot.Discord.Logging.Extensions;
 using BardBot.Discord.Models.Configuration;
 
 using Discord;
+using Discord.Interactions;
 using Discord.WebSocket;
 
 using Microsoft.Extensions.Hosting;
@@ -13,30 +17,40 @@ namespace BardBot.Discord.Hosting;
 public class Bot : IHostedService
 {
     private BotConfiguration Configuration { get; init; }
-    private DiscordSocketClient Client { get; init; }
+    private DiscordSocketClient DiscordClient { get; init; }
     private ILogger<Bot> Logger { get; init; }
+    private InteractionService InteractionService { get; init; }
+    private IServiceProvider Services { get; init; }
 
     public Bot(
         DiscordOptions options,
-        DiscordSocketClient client,
-        ILogger<Bot> logger
+        DiscordSocketClient discordClient,
+        ILogger<Bot> logger,
+        InteractionService interactionService,
+        IServiceProvider services
     )
     {
-        Client = client;
         Configuration = options.Bot;
+        DiscordClient = discordClient;
+        InteractionService = interactionService;
         Logger = logger;
+        Services = services;
 
-        Client.Connected += OnConnected;
-        Client.Disconnected += OnDisconnected;
-        Client.Ready += OnReady;
+        DiscordClient.InteractionCreated += OnInteraction;
+        DiscordClient.Log += Logger.LogAsync;
+        DiscordClient.Ready += () => InteractionService.RegisterCommandsGloballyAsync(deleteMissing: true);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         Logger.LogInformation("Bot is starting...");
 
-        await Client.LoginAsync(TokenType.Bot, Configuration.Token);
-        await Client.StartAsync();
+        var addModulesTask = InteractionService.AddModulesAsync(Assembly.GetExecutingAssembly(), Services);
+
+        await DiscordClient.LoginAsync(TokenType.Bot, Configuration.Token);
+        await DiscordClient.StartAsync();
+
+        await addModulesTask;
 
         Logger.LogInformation("Bot is started!");
     }
@@ -45,28 +59,30 @@ public class Bot : IHostedService
     {
         Logger.LogInformation("Bot is stopping...");
 
-        await Client.StopAsync();
-        await Client.LogoutAsync();
+        InteractionService.Dispose();
+
+        await DiscordClient.StopAsync();
+        await DiscordClient.LogoutAsync();
 
         Logger.LogInformation("Bot is stopped!");
     }
 
-    private Task OnConnected()
+    private async Task OnInteraction(SocketInteraction interaction)
     {
-        Logger.LogInformation("Bot is connected.");
-        return Task.CompletedTask;
-    }
+        try
+        {
+            var context = new InteractionContext(DiscordClient, interaction);
+            var result = await InteractionService.ExecuteCommandAsync(context, Services);
 
-    private Task OnDisconnected(Exception exception)
-    {
-        Logger.LogError(exception, "Bot is disconnected.");
-        return Task.CompletedTask;
-    }
-
-    private Task OnReady()
-    {
-        Logger.LogInformation("Bot is ready.");
-        return Task.CompletedTask;
+            if (!result.IsSuccess)
+                await context.Interaction.RespondAsync(result.ToString());
+        }
+        catch
+        {
+            if (interaction.Type == InteractionType.ApplicationCommand)
+                await interaction.GetOriginalResponseAsync()
+                    .ContinueWith(msg => msg.Result.DeleteAsync());
+        }
     }
 
 }

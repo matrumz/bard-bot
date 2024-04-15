@@ -2,6 +2,7 @@ using BardBot.Common.Hosting;
 using BardBot.Common.Hosting.Extensions;
 using BardBot.Discord.Models.Configuration;
 
+using Discord.Interactions;
 using Discord.WebSocket;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -18,12 +19,13 @@ public class Startup : IStartup
             // ...
         };
 
-        services.AddSingleton(discordSocketConfig);
-        services.AddSingleton<DiscordSocketClient>();
+        services.AddHostedService<Bot>();
         services.AddOptions<DiscordOptions>()
             .BindConfiguration(DiscordOptions.Discord)
             .ValidateDataAnnotations()
             .AddValueAsSingleton();
-        services.AddHostedService<Bot>();
+        services.AddSingleton(discordSocketConfig);
+        services.AddSingleton<DiscordSocketClient>();
+        services.AddSingleton<InteractionService>();
     }
 }
