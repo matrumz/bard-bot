@@ -39,11 +39,11 @@ public static class ILoggerExtensions
     {
         if (result.IsSuccess)
         {
-            logger.LogTrace("Interaction completed successfully.", result);
+            logger.LogTrace(result.ToString());
         }
         else
         {
-            logger.LogError("Interaction failed.", result);
+            logger.LogError(result.ToString());
         }
         return Task.CompletedTask;
     }

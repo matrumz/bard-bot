@@ -16,12 +16,7 @@ public class Startup : IStartup
     {
         var discordSocketConfig = new DiscordSocketConfig()
         {
-            // ...
-        };
-
-        var interactionServiceConfig = new InteractionServiceConfig()
-        {
-            DefaultRunMode = RunMode.Async,
+            UseInteractionSnowflakeDate = false, // My computer system clock often drifts and I cannot vouch for the accuracy of my users' system clocks. This will prevent the bot from rejecting interactions that are "too old" when they are not.
         };
 
         services.AddHostedService<Bot>();

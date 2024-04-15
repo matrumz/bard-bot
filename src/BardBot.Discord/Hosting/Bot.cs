@@ -72,7 +72,7 @@ public class Bot : IHostedService
     {
         try
         {
-            var context = new InteractionContext(DiscordClient, interaction);
+            var context = new SocketInteractionContext(DiscordClient, interaction);
             var result = await InteractionService.ExecuteCommandAsync(context, Services);
 
             if (!result.IsSuccess)
@@ -97,16 +97,16 @@ public class Bot : IHostedService
                     await context.Interaction.RespondAsync("Invalid arguments");
                     break;
                 case InteractionCommandError.ConvertFailed:
-                    await context.Interaction.RespondAsync(seeMaintainerMessage);
                     _ = Logger.LogAsync(result);
+                    await context.Interaction.RespondAsync(seeMaintainerMessage);
                     break;
                 case InteractionCommandError.Exception:
-                    await context.Interaction.RespondAsync(seeMaintainerMessage);
                     _ = Logger.LogAsync(result);
+                    await context.Interaction.RespondAsync(seeMaintainerMessage);
                     break;
                 case InteractionCommandError.ParseFailed:
-                    await context.Interaction.RespondAsync(seeMaintainerMessage);
                     _ = Logger.LogAsync(result);
+                    await context.Interaction.RespondAsync(seeMaintainerMessage);
                     break;
                 case InteractionCommandError.UnknownCommand:
                     await context.Interaction.RespondAsync("Unknown command");
@@ -115,8 +115,8 @@ public class Bot : IHostedService
                     await context.Interaction.RespondAsync($"You do not have permission to run this command: {result.ErrorReason}");
                     break;
                 case InteractionCommandError.Unsuccessful:
-                    await context.Interaction.RespondAsync(seeMaintainerMessage);
                     _ = Logger.LogAsync(result);
+                    await context.Interaction.RespondAsync(seeMaintainerMessage);
                     break;
             }
         }
