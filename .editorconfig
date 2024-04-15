@@ -12,6 +12,10 @@ trim_trailing_whitespace = true
 [*.{json,jsonc}]
 indent_size = 2
 
+# VSCode Json files
+[{.devcontainer,.vscode}/*.json]
+indent_style = space
+
 # Dockerfiles
 [Dockerfile]
 indent_size = 4
