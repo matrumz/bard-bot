@@ -1,4 +1,20 @@
+# Ignore everything by default
 /*
-!/src
+# Include docker files
+!/.Dockerfile
 !/.dockerignore
-!/Dockerfile
+!/dockerfile.*
+# Include source code
+!/src
+!/*.sln
+# Include build resources
+!/nuget.config
+# Exclude development resources
+appsettings.Development.json
+appsettings.local.json
+secrets.json
+# Exclude artifacts that get placed in source
+bin/
+obj/
+out/
+TestResults/
