@@ -14,11 +14,16 @@ indent_size = 2
 
 # VSCode Json files
 [{.devcontainer,.vscode}/*.json]
+indent_size = 4
 indent_style = space
 
 # Dockerfiles
 [Dockerfile]
 indent_size = 4
+
+# Shell scripts
+[*.sh]
+indent_size = 2
 
 # Markdown files
 [*.md]
