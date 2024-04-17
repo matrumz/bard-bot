@@ -8,7 +8,8 @@ public static class IHostBuilderExtensions
     {
         var startup = Activator.CreateInstance<TStartup>();
         return hostBuilder
-            .ConfigureServices((hostContext, services) => startup.ConfigureServices(hostContext, services))
+            .ConfigureAppConfiguration(startup.ConfigureAppConfiguration)
+            .ConfigureServices(startup.ConfigureServices)
             ;
     }
 }
