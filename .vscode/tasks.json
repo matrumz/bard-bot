@@ -36,19 +36,6 @@
                 "${workspaceFolder}/BardBot.sln"
             ],
             "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "update secrets",
-            "command": "bash",
-            "type": "process",
-            "options": {
-                "cwd": "${workspaceFolder}/src/BardBot"
-            },
-            "args": [
-                "-c",
-                "cat secrets.json | dotnet user-secrets set"
-            ],
-            "problemMatcher": []
         }
     ]
 }
