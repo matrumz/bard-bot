@@ -1,5 +1,4 @@
-ARG DOTNET_VERSION="6.0"
-# Currently limited to .NET 6.0 by Discord.Net
+ARG DOTNET_VERSION="8.0"
 
 #### SDK #######################################################################
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION} AS sdk
