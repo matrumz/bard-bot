@@ -1,13 +1,13 @@
 namespace BardBot.Discord.Exporting.PathTokens;
 
-internal partial record Token<TValue>(
+public partial record Token(
     string Id,
-    TValue Value
+    object Value
 )
 {
-    public static Token<DateTime> Before(DateTime value) => new("before", value);
-    public static Token<DateTime> After(DateTime value) => new("after", value);
-    public static Token<string> Character(string value) => new("character", value);
+    public static Token After(DateTime value) => new("after", value);
+    public static Token Before(DateTime value) => new("before", value);
+    public static Token Character(string value) => new("character", value);
 
     /// <summary>
     /// Create a new custom token with the given id and value.
@@ -15,10 +15,10 @@ internal partial record Token<TValue>(
     /// <param name="id"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static Token<TValue> From(string id, TValue value) => new(id, value);
+    public static Token From(string id, object value) => new(id, value);
 }
 
-internal partial record Token<TValue>
+public partial record Token<TValue>
 {
     public const string DefaultDateTimeFormat = "yyyy-MM-dd-HHmm";
     public const string DefaultDelimitedStringFormat = "s|^|.|";

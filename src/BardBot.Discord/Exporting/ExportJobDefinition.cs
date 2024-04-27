@@ -1,13 +1,14 @@
-using Discord;
+// using Discord;
 
-namespace BardBot.Discord.Exporting;
+// namespace BardBot.Discord.Exporting;
 
-internal sealed partial class ExportJobDefinition
-{
-    public IGuild Guild { get; }
-    public IChannel Channel { get; }
-    public string
+// internal sealed partial class ExportJobDefinition
+// {
+//     public IGuild Guild { get; }
 
-    public Snowflake? Before { get; }
-    public Snowflake? After { get; }
-}
+//     public IChannel Channel { get; }
+
+//     public Snowflake? Before { get; }
+
+//     public Snowflake? After { get; }
+// }

@@ -1,9 +1,6 @@
 namespace BardBot.Discord.Exporting.PathTokens;
 
-internal interface IToken
+public interface IToken<out TValue>
 {
-    string ShortId { get; }
-    string LongId { get; }
-
-    public IToken
+    public TValue Value { get; }
 }
