@@ -1,8 +1,7 @@
 namespace BardBot.Discord.Exporting.PathTokens;
 
 [Flags]
-public enum TokenPlaceholderFlags
+internal enum TokenPlaceholderFlags
 {
     None = 0,
-    PathSafe = 1,
 }

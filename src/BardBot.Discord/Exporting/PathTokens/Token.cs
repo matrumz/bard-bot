@@ -1,6 +1,8 @@
+using System.Globalization;
+
 namespace BardBot.Discord.Exporting.PathTokens;
 
-public partial record Token(
+internal partial record Token(
     string Id,
     object Value
 )
@@ -18,8 +20,23 @@ public partial record Token(
     public static Token From(string id, object value) => new(id, value);
 }
 
-public partial record Token<TValue>
+internal partial record Token<TValue>
 {
     public const string DefaultDateTimeFormat = "yyyy-MM-dd-HHmm";
-    public const string DefaultDelimitedStringFormat = "s|^|.|";
+}
+
+public static partial class StringExtensions
+{
+    internal static string ApplyTokens(this string template, IEnumerable<Token> tokens)
+    {
+        template.GetTokenPlaceholders().ToList().ForEach(placeholder =>
+        {
+            var token = tokens.FirstOrDefault(token => token.Id == placeholder.TokenId, Token.From(placeholder.TokenId, placeholder.DefaultValue));
+            var value = token.Value is IFormattable formattable
+                ? formattable.ToString(placeholder.Format, CultureInfo.InvariantCulture)
+                : token.Value;
+            template = template.Replace(placeholder.Match, value.ToString());
+        });
+        return template;
+    }
 }

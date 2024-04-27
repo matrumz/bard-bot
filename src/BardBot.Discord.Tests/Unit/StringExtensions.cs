@@ -9,7 +9,7 @@ namespace BardBot.Discord.Tests.Unit
 
         [Theory]
         [MemberData(nameof(TemplateTokensResultGenerator.StringExtensions_ApplyTokens_FilePathSubstitutions_Success), MemberType = typeof(TemplateTokensResultGenerator))]
-        public void ApplyTokens_FilePathSubstitutions_Success(string template, IEnumerable<Token> tokens, string expected)
+        internal void ApplyTokens_FilePathSubstitutions_Success(string template, IEnumerable<Token> tokens, string expected)
         {
             // Arrange
 
@@ -31,7 +31,7 @@ namespace BardBot.Discord.Tests.Generators
         {
             yield return new object[]
             {
-                "/ttrpg/campaigns/are-we-excited/sessions/{before,:yyyy-MM-dd-HHmm}__{after,:yyyy-MM-dd-HHmm}/transcripts/{character,=common,pathsafe}.txt",
+                "/ttrpg/campaigns/are-we-excited/sessions/{before,:yyyy-MM-dd-HHmm}__{after,:yyyy-MM-dd-HHmm}/transcripts/{character,=common}.txt",
                 new List<Token>
                 {
                     Token.Character("maud"),
