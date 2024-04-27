@@ -14,7 +14,7 @@ using static BardBot.Discord.Models.Configuration.DiscordOptions;
 
 namespace BardBot.Discord.Hosting;
 
-public class Bot : IHostedService
+internal class Bot : IHostedService
 {
     private BotConfiguration Configuration { get; init; }
     private DiscordSocketClient DiscordClient { get; init; }

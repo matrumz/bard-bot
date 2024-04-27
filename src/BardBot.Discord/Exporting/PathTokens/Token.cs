@@ -25,7 +25,7 @@ internal partial record Token<TValue>
     public const string DefaultDateTimeFormat = "yyyy-MM-dd-HHmm";
 }
 
-public static partial class StringExtensions
+internal static partial class StringExtensions
 {
     internal static string ApplyTokens(this string template, IEnumerable<Token> tokens)
     {

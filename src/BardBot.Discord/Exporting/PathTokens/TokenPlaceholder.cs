@@ -26,7 +26,7 @@ internal sealed partial record TokenPlaceholder(
     public static partial Regex UnescapedDelimiterRegex();
 }
 
-public static partial class StringExtensions
+internal static partial class StringExtensions
 {
     internal static IEnumerable<TokenPlaceholder> GetTokenPlaceholders(this string template) =>
         TokenPlaceholder.Regex()

@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BardBot.Discord.Logging.Extensions;
 
-public static class ILoggerExtensions
+internal static class ILoggerExtensions
 {
-    public async static Task LogAsync(this ILogger logger, LogMessage message)
+    internal async static Task LogAsync(this ILogger logger, LogMessage message)
     {
         var severity = message.Severity switch
         {
@@ -23,7 +23,7 @@ public static class ILoggerExtensions
         await Task.CompletedTask;
     }
 
-    public async static Task LogAsync(this ILogger logger, IResult result)
+    internal async static Task LogAsync(this ILogger logger, IResult result)
     {
         if (result.IsSuccess)
         {

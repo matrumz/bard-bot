@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BardBot.Discord.Models.Configuration;
 
-public partial record DiscordOptions
+internal partial record DiscordOptions
 {
     public BotConfiguration Bot { get; init; } = new();
 
