@@ -1,6 +1,5 @@
 namespace BardBot.Discord.Hosting;
 
-public class ExporterFactory
+public interface IChannelExporter
 {
-
 }

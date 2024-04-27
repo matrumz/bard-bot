@@ -1,0 +1,1 @@
+For auto-loading modules from the assembly to work, they cannot be marked as internal. This is because the Discord.Net library uses reflection to find and load modules, and it cannot access internal classes. This means that all modules must be marked as public.
