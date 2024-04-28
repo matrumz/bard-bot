@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace BardBot.Discord.Hosting;
 
-public class Startup : IStartup
+public sealed class Startup : IStartup
 {
     public void ConfigureServices(HostBuilderContext hostBuilderContext, IServiceCollection services)
     {

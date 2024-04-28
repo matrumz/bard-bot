@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BardBot.Discord.Hosting;
 
-internal class InteractionHandler(
+internal sealed class InteractionHandler(
     DiscordSocketClient discordClient,
     ILogger<InteractionHandler> logger,
     InteractionService interactionService,

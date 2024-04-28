@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BardBot.Discord.Hosting;
 
-internal class ConnectionHandler(
+internal sealed class ConnectionHandler(
     DiscordOptions discordOptions,
     DiscordSocketClient discordClient,
     ILogger<ConnectionHandler> logger
