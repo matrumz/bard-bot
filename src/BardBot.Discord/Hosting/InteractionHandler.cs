@@ -1,7 +1,6 @@
 using System.Reflection;
 
 using BardBot.Discord.Logging.Extensions;
-using BardBot.Discord.Models.Configuration;
 
 using Discord;
 using Discord.Interactions;
@@ -10,71 +9,36 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using static BardBot.Discord.Models.Configuration.DiscordOptions;
-
 namespace BardBot.Discord.Hosting;
 
-internal class Bot : IHostedService
+internal class InteractionHandler(
+    DiscordSocketClient discordClient,
+    ILogger<InteractionHandler> logger,
+    InteractionService interactionService,
+    IServiceProvider services
+) : IHostedService
 {
-    private BotConfiguration Configuration { get; init; }
-    private DiscordSocketClient DiscordClient { get; init; }
-    private ILogger<Bot> Logger { get; init; }
-    private InteractionService InteractionService { get; init; }
-    private IServiceProvider Services { get; init; }
-
-    public Bot(
-        DiscordOptions options,
-        DiscordSocketClient discordClient,
-        ILogger<Bot> logger,
-        InteractionService interactionService,
-        IServiceProvider services
-    )
-    {
-        Configuration = options.Bot;
-        DiscordClient = discordClient;
-        InteractionService = interactionService;
-        Logger = logger;
-        Services = services;
-
-        DiscordClient.InteractionCreated += OnInteraction;
-        DiscordClient.Log += Logger.LogAsync;
-        DiscordClient.Ready += () => InteractionService.RegisterCommandsGloballyAsync(deleteMissing: true);
-        InteractionService.InteractionExecuted += InteractionExecuted;
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        Logger.LogInformation("Bot is starting...");
+        discordClient.InteractionCreated += OnInteraction;
+        discordClient.Ready += () => interactionService.RegisterCommandsGloballyAsync(deleteMissing: true);
+        interactionService.InteractionExecuted += InteractionExecuted;
 
-        var addModulesTask = InteractionService.AddModulesAsync(Assembly.GetExecutingAssembly(), Services);
-
-        await DiscordClient.LoginAsync(TokenType.Bot, Configuration.Token);
-        await DiscordClient.StartAsync();
-
-        await addModulesTask;
-
-        Logger.LogInformation("Bot is started!");
+        await interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken cancellationToken)
     {
-        Logger.LogInformation("Bot is stopping...");
-
-        InteractionService.Dispose();
-
-        await DiscordClient.StopAsync();
-        await DiscordClient.LogoutAsync();
-
-        Logger.LogInformation("Bot is stopped!");
+        interactionService.Dispose();
+        return Task.CompletedTask;
     }
 
     private async Task OnInteraction(SocketInteraction interaction)
     {
         try
         {
-            var context = new SocketInteractionContext(DiscordClient, interaction);
-            var result = await InteractionService.ExecuteCommandAsync(context, Services);
-
+            var context = new SocketInteractionContext(discordClient, interaction);
+            var result = await interactionService.ExecuteCommandAsync(context, services);
             if (!result.IsSuccess)
                 await context.Interaction.RespondAsync(result.ToString());
         }
@@ -97,15 +61,15 @@ internal class Bot : IHostedService
                     await context.Interaction.RespondAsync("Invalid arguments", ephemeral: true);
                     break;
                 case InteractionCommandError.ConvertFailed:
-                    _ = Logger.LogAsync(result);
+                    _ = logger.LogAsync(result);
                     await context.Interaction.RespondAsync(seeMaintainerMessage, ephemeral: true);
                     break;
                 case InteractionCommandError.Exception:
-                    _ = Logger.LogAsync(result);
+                    _ = logger.LogAsync(result);
                     await context.Interaction.RespondAsync(seeMaintainerMessage, ephemeral: true);
                     break;
                 case InteractionCommandError.ParseFailed:
-                    _ = Logger.LogAsync(result);
+                    _ = logger.LogAsync(result);
                     await context.Interaction.RespondAsync(seeMaintainerMessage, ephemeral: true);
                     break;
                 case InteractionCommandError.UnknownCommand:
@@ -115,14 +79,14 @@ internal class Bot : IHostedService
                     await context.Interaction.RespondAsync($"You do not have permission to run this command: {result.ErrorReason}", ephemeral: true);
                     break;
                 case InteractionCommandError.Unsuccessful:
-                    _ = Logger.LogAsync(result);
+                    _ = logger.LogAsync(result);
                     await context.Interaction.RespondAsync(seeMaintainerMessage, ephemeral: true);
                     break;
             }
         }
         else
         {
-            _ = Logger.LogAsync(result);
+            _ = logger.LogAsync(result);
         }
     }
 

@@ -19,7 +19,8 @@ public class Startup : IStartup
             UseInteractionSnowflakeDate = false, // My computer system clock often drifts and I cannot vouch for the accuracy of my users' system clocks. This will prevent the bot from rejecting interactions that are "too old" when they are not.
         };
 
-        services.AddHostedService<Bot>();
+        services.AddHostedService<ConnectionHandler>();
+        services.AddHostedService<InteractionHandler>();
         services.AddOptions<DiscordOptions>()
             .BindConfiguration(DiscordOptions.Discord)
             .ValidateDataAnnotations()
