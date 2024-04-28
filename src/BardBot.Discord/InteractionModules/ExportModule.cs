@@ -4,7 +4,7 @@ using Discord.Interactions;
 
 using Microsoft.Extensions.Logging;
 
-namespace BardBot.Discord.Modules;
+namespace BardBot.Discord.InteractionModules;
 
 [Group("export", "Export resources from Discord")]
 [RequireContext(ContextType.Guild)]

@@ -1,7 +1,7 @@
 using Discord.Interactions;
 using Discord.Interactions.Builders;
 
-namespace BardBot.Discord.Modules;
+namespace BardBot.Discord.InteractionModules;
 
 public partial class ExportModule
 {

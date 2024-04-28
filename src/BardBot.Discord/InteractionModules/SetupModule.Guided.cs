@@ -2,7 +2,7 @@ using Discord.Interactions;
 
 using Microsoft.Extensions.Logging;
 
-namespace BardBot.Discord.Modules;
+namespace BardBot.Discord.InteractionModules;
 
 public partial class SetupModule
 {

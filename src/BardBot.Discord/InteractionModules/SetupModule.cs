@@ -2,7 +2,7 @@ using Discord.Interactions;
 
 using Microsoft.Extensions.Logging;
 
-namespace BardBot.Discord.Modules;
+namespace BardBot.Discord.InteractionModules;
 
 [Group("setup-wizard", "Configure this bot for your server")]
 [RequireContext(ContextType.Guild)]
