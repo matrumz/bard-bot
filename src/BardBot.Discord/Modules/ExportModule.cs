@@ -10,7 +10,7 @@ namespace BardBot.Discord.Modules;
 [RequireContext(ContextType.Guild)]
 [RequireOwner]
 public partial class ExportModule(
-    IChannelExporter channelExporter,
+    // IChannelExporter channelExporter,
     ILogger<ExportModule> logger
 ) : InteractionModuleBase<SocketInteractionContext>
 {
