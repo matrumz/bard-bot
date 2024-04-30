@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BardBot.Discord.Interactions;
 
-[Group("export", "Export resources from Discord")]
+[Group(GroupName, "Export resources from Discord")]
 [RequireContext(ContextType.Guild)]
 [RequireOwner]
 public partial class ExportModule(
@@ -14,4 +14,5 @@ public partial class ExportModule(
     ILogger<ExportModule> logger
 ) : InteractionModuleBase<SocketInteractionContext>
 {
+    private const string GroupName = "export";
 }

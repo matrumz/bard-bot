@@ -7,7 +7,7 @@ public sealed partial class ExportModule
 {
     [SlashCommand("chat", "Configured channels & threads.")]
     public async Task ExportChatAsync() =>
-        await Context.Interaction.RespondWithModalAsync<ChatExportModal>(ChatExportModal.CustomId);
+        await Context.Interaction.RespondWithModalAsync<ChatExportModal>($"{GroupName}:{ChatExportModal.CustomId}");
 
     public sealed class ChatExportModal : IModal
     {
