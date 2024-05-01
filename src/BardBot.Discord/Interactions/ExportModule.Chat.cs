@@ -17,25 +17,23 @@ public sealed partial class ExportModule
 
         [InputLabel("After Date")]
         [RequiredInput(false)]
-        [ModalTextInput("after_date", style: TextInputStyle.Short, placeholder: @"""last"" or a date with time")]
-        public string AfterDate { get; set; }
+        [ModalTextInput("after_date", style: TextInputStyle.Short, placeholder: @"""$last"" or a date with time")]
+        public string? AfterDate { get; set; }
 
         [InputLabel("Before Date")]
         [RequiredInput(false)]
-        [ModalTextInput("before_date", style: TextInputStyle.Short, placeholder: @"""now"" or a date with time")]
-        public string BeforeDate { get; set; }
+        [ModalTextInput("before_date", style: TextInputStyle.Short, placeholder: @"""$now"" or a date with time")]
+        public string? BeforeDate { get; set; }
 
         [InputLabel("Bulk Export")]
         [RequiredInput(false)]
         [ModalTextInput("bulk_export", style: TextInputStyle.Paragraph, placeholder: "CSV of after/before dates")]
-        public string BulkExport { get; set; }
+        public string? BulkExport { get; set; }
 
     }
 
     [ModalInteraction(ChatExportModal.CustomId)]
-    public async Task ModalResponseAsync(ChatExportModal modal)
-    {
-        await RespondAsync(modal.BulkExport);
-    }
+    public async Task ModalResponseAsync(ChatExportModal modal) =>
+        await Context.Interaction.RespondAsync("I don't know how to do this yet.");
 
 }
