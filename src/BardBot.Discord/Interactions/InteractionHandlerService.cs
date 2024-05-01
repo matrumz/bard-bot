@@ -9,11 +9,11 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BardBot.Discord.Hosting;
+namespace BardBot.Discord.Interactions;
 
-internal sealed class InteractionHandler(
+internal sealed class InteractionHandlerService(
     DiscordSocketClient discordClient,
-    ILogger<InteractionHandler> logger,
+    ILogger<InteractionHandlerService> logger,
     InteractionService interactionService,
     IServiceProvider services
 ) : IHostedService

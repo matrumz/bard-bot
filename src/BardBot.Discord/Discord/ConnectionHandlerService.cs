@@ -7,12 +7,12 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BardBot.Discord.Hosting;
+namespace BardBot.Discord.Discord;
 
-internal sealed class ConnectionHandler(
+internal sealed class ConnectionHandlerService(
     DiscordOptions discordOptions,
     DiscordSocketClient discordClient,
-    ILogger<ConnectionHandler> logger
+    ILogger<ConnectionHandlerService> logger
 ) : IHostedService
 {
 

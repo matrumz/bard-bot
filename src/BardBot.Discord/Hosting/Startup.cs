@@ -1,5 +1,7 @@
 using BardBot.Common.Hosting;
 using BardBot.Common.Hosting.Extensions;
+using BardBot.Discord.Discord;
+using BardBot.Discord.Interactions;
 using BardBot.Discord.Models.Configuration;
 
 using Discord.Interactions;
@@ -14,8 +16,8 @@ public sealed class Startup : IStartup
 {
     public void ConfigureServices(HostBuilderContext hostBuilderContext, IServiceCollection services)
     {
-        services.AddHostedService<ConnectionHandler>();
-        services.AddHostedService<InteractionHandler>();
+        services.AddHostedService<ConnectionHandlerService>();
+        services.AddHostedService<InteractionHandlerService>();
         services.AddOptions<DiscordOptions>()
             .BindConfiguration(DiscordOptions.Discord)
             .ValidateDataAnnotations()
