@@ -12,9 +12,9 @@ internal class MockCampaignRepository : ICampaignRepository
         return _campaigns;
     }
 
-    public Campaign? Get(Guid id)
+    public Campaign? Get(Guid campaignId)
     {
-        return _campaigns.FirstOrDefault(c => c.Id == id);
+        return _campaigns.FirstOrDefault(c => c.Id == campaignId);
     }
 
     public Campaign? Get(ulong guildId)

@@ -43,6 +43,7 @@ public sealed class Startup : IStartup
         services.AddSingleton<ExportJobFactory>();
         services.AddTransient<ChatExportJob>();
         services.AddTransient<ICampaignRepository, MockCampaignRepository>();
+        services.AddTransient<IChatExportHistoryRepository, MockChatExportHistoryRepository>();
 
     }
 }
