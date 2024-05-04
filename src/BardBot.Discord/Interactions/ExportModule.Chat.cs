@@ -1,5 +1,11 @@
+using System.Text;
+
+using BardBot.Discord.Exporting;
+
 using Discord;
 using Discord.Interactions;
+
+using Microsoft.Extensions.Logging;
 
 namespace BardBot.Discord.Interactions;
 
@@ -27,13 +33,38 @@ public sealed partial class ExportModule
 
         [InputLabel("Bulk Export")]
         [RequiredInput(false)]
-        [ModalTextInput("bulk_export", style: TextInputStyle.Paragraph, placeholder: "CSV of after/before dates")]
+        [ModalTextInput("bulk_export", style: TextInputStyle.Paragraph, placeholder: "CSV or JSON Array of after/before dates")]
         public string? BulkExport { get; set; }
 
     }
 
     [ModalInteraction(ChatExportModal.CustomId)]
-    public async Task ModalResponseAsync(ChatExportModal modal) =>
-        await Context.Interaction.RespondAsync("I don't know how to do this yet.");
+    public async Task ModalResponseAsync(ChatExportModal modal)
+    {
+        try
+        {
+            await Context.Interaction.RespondAsync("Exporting chat...");
+
+            var ranges = new List<AfterBeforeDate>{
+                new(DateTime.Now, DateTime.Now)
+            };
+
+            var job = exportJobFactory.CreateChatExportJob(Context.Guild, ranges);
+            var files = await job.ToFiles();
+
+            var message = new StringBuilder()
+                .AppendLine($"Exported {files.Count()} files{(files.Any() ? ":" : ".")}")
+                .AppendJoin('\n', files.Select(file => Format.Sanitize(file.FullName)))
+                .ToString();
+
+            await Context.Interaction.ModifyOriginalResponseAsync(orig => orig.Content = message);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to export chat.");
+            await Context.Interaction.ModifyOriginalResponseAsync(orig => orig.Content = "Failed to export chat.");
+        }
+    }
+
 
 }

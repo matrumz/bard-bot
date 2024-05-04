@@ -1,4 +1,4 @@
-using BardBot.Discord.Hosting;
+using BardBot.Discord.Exporting;
 
 using Discord.Interactions;
 
@@ -10,7 +10,7 @@ namespace BardBot.Discord.Interactions;
 [RequireContext(ContextType.Guild)]
 [RequireOwner]
 public partial class ExportModule(
-    // IChannelExporter channelExporter,
+    ExportJobFactory exportJobFactory,
     ILogger<ExportModule> logger
 ) : InteractionModuleBase<SocketInteractionContext>
 {
