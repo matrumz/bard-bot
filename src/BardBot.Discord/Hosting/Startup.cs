@@ -5,7 +5,7 @@ using BardBot.Discord.Discord;
 using BardBot.Discord.Exporting;
 using BardBot.Discord.Exporting.Chat;
 using BardBot.Discord.Interactions;
-using BardBot.Discord.Models.Configuration;
+using BardBot.Discord.Configuration;
 
 using Discord.Interactions;
 using Discord.WebSocket;

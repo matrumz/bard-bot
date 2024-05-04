@@ -1,4 +1,4 @@
-namespace BardBot.Discord.Models.Configuration;
+namespace BardBot.Discord.Configuration;
 
 internal partial record DiscordOptions
 {
