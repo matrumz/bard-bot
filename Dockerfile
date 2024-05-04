@@ -18,6 +18,7 @@ apt-get install -y --no-install-recommends \
 	git \
 	openssh-client \
 	sudo \
+	uuid-runtime \
 	vim
 DOCKERFILE_EOF
 
