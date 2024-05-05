@@ -1,3 +1,4 @@
+using BardBot.Discord.Database;
 using BardBot.Discord.Exporting;
 
 using Discord.Interactions;
@@ -11,6 +12,7 @@ namespace BardBot.Discord.Interactions;
 [RequireOwner]
 public partial class ExportModule(
     ExportJobFactory exportJobFactory,
+    IChatExportHistoryRepository chatExportHistoryRepository,
     ILogger<ExportModule> logger
 ) : InteractionModuleBase<SocketInteractionContext>
 {

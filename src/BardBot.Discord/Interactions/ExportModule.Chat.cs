@@ -1,6 +1,8 @@
 using System.Text;
 
+using BardBot.Discord.Common;
 using BardBot.Discord.Exporting;
+using BardBot.Discord.Exporting.PathTokens;
 
 using Discord;
 using Discord.Interactions;
@@ -11,9 +13,16 @@ namespace BardBot.Discord.Interactions;
 
 public sealed partial class ExportModule
 {
+    private DateTime? _lastChatExport;
+    private DateTime? LastChatExport => _lastChatExport ??= chatExportHistoryRepository.Get(Context.Guild.Id)?.OrderByDescending(history => history.Before)?.FirstOrDefault()?.Before;
+
     [SlashCommand("chat", "Configured channels & threads.")]
     public async Task ExportChatAsync() =>
-        await Context.Interaction.RespondWithModalAsync<ChatExportModal>($"{GroupName}:{ChatExportModal.CustomId}");
+        await Context.Interaction.RespondWithModalAsync<ChatExportModal>($"{GroupName}:{ChatExportModal.CustomId}", modifyModal: (modal) =>
+        {
+            modal.UpdateTextInput("after_date", LastChatExport?.ToString());
+            modal.UpdateTextInput("before_date", DateTime.Now.ToString());
+        });
 
     public sealed class ChatExportModal : IModal
     {
@@ -45,24 +54,40 @@ public sealed partial class ExportModule
         {
             await Context.Interaction.RespondAsync("Exporting chat...");
 
-            var ranges = new List<AfterBeforeDate>{
-                new(DateTime.Now, DateTime.Now)
+            // Prep datetime converter & aggregate list of ranges
+            var converter = new DateTimeConverter
+            {
+                CheckFormats = [Token.DefaultDateTimeFormat],
+                Last = LastChatExport,
             };
+            var ranges = new List<AfterBeforeDate>();
 
+            // Add single After/Before fields (if at least one specified)
+            if (modal.AfterDate is not null || modal.BeforeDate is not null)
+                ranges.Add(new(
+                    converter.TryParse(modal.AfterDate, out var after) ? after!.Value : DateTime.MinValue,
+                    converter.TryParse(modal.BeforeDate, out var before) ? before!.Value : DateTime.MaxValue
+                ));
+
+            // Add bulk export ranges (if specified)
+
+            // Run the export job
             var job = exportJobFactory.CreateChatExportJob(Context.Guild, ranges);
             var files = await job.ToFiles();
 
+            // Report job results
             var message = new StringBuilder()
                 .AppendLine($"Exported {files.Count()} files{(files.Any() ? ":" : ".")}")
                 .AppendJoin('\n', files.Select(file => Format.Sanitize(file.FullName)))
                 .ToString();
-
             await Context.Interaction.ModifyOriginalResponseAsync(orig => orig.Content = message);
+
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to export chat.");
-            await Context.Interaction.ModifyOriginalResponseAsync(orig => orig.Content = "Failed to export chat.");
+            const string message = "Failed to export chat.";
+            logger.LogError(ex, message);
+            await Context.Interaction.ModifyOriginalResponseAsync(orig => orig.Content = message);
         }
     }
 

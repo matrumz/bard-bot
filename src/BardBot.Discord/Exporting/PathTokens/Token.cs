@@ -20,7 +20,7 @@ internal partial record Token(
     public static Token From(string id, object value) => new(id, value);
 }
 
-internal partial record Token<TValue>
+internal partial record Token
 {
     public const string DefaultDateTimeFormat = "yyyy-MM-dd-HHmm";
 }
