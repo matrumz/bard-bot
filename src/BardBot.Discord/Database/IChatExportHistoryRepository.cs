@@ -2,6 +2,9 @@ using BardBot.Discord.Database.Models;
 
 namespace BardBot.Discord.Database;
 
+/// <summary>
+/// Standard interface for a repository of chat export history.
+/// </summary>
 public partial interface IChatExportHistoryRepository
 {
 
@@ -9,6 +12,7 @@ public partial interface IChatExportHistoryRepository
 
 }
 
+// Helper methods for the chat export history repository.
 public partial interface IChatExportHistoryRepository
 {
 
