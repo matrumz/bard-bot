@@ -1,9 +1,7 @@
 using System.Text;
-using System.Text.Json;
 
 using BardBot.Discord.Common;
 using BardBot.Discord.Exporting;
-using BardBot.Discord.Exporting.PathTokens;
 
 using Discord;
 using Discord.Interactions;
@@ -32,8 +30,14 @@ public sealed partial class ExportModule
     public sealed class ChatExportModal : IModal
     {
         public const string CustomId = "chat_export_modal";
+        public const string DefaultDateTimeFormat = "yyyy-MM-dd-HHmm";
 
         public string Title => "Export Chat";
+
+        [InputLabel("Date format")]
+        [RequiredInput(false)]
+        [ModalTextInput("date_format", style: TextInputStyle.Short, initValue: DefaultDateTimeFormat, placeholder: "Format of dates in this form. e.g. yyyy-MM-dd HH:mm:ss")]
+        public string? DateFormat { get; set; }
 
         [InputLabel("After Date")]
         [RequiredInput(false)]
@@ -47,7 +51,7 @@ public sealed partial class ExportModule
 
         [InputLabel("Bulk Export")]
         [RequiredInput(false)]
-        [ModalTextInput("bulk_export", style: TextInputStyle.Paragraph, placeholder: "CSV or JSON Array of after/before dates")]
+        [ModalTextInput("bulk_export", style: TextInputStyle.Paragraph, placeholder: "CSV or YAML Array of after/before dates")]
         public string? BulkExport { get; set; }
 
     }
@@ -62,7 +66,7 @@ public sealed partial class ExportModule
             // Prep datetime converter & aggregate list of ranges
             var converter = new DateTimeConverter
             {
-                CheckFormats = [Token.DefaultDateTimeFormat],
+                CheckFormats = modal.DateFormat is not null ? [modal.DateFormat] : [],
                 Last = LastChatExport,
             };
             var ranges = new List<AfterBeforeDate>();
@@ -76,41 +80,32 @@ public sealed partial class ExportModule
 
             // Load bulk ranges
             // TODO: record exceptions at each level in case all fail -> then report at end
-            // Start with attempting to parse JSON array
+            // Start by attempting to parse YAML
             try
             {
-                var bulkRanges = JsonSerializer.Deserialize<List<AfterBeforeDate>>(modal.BulkExport ?? "[]") ?? [];
-                ranges.AddRange(bulkRanges);
+                var deserializer = new DeserializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .WithTypeConverter(converter)
+                    .Build();
+                var yamlRanges = deserializer.Deserialize<List<AfterBeforeDate>>(modal.BulkExport ?? "[]") ?? [];
             }
-            catch (JsonException)
+            catch (YamlException)
             {
+                // Fall back to parsing CSV
                 try
                 {
-                    // Fall back to parsing YAML
-                    var deserializer = new DeserializerBuilder()
-                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                        .WithTypeConverter(converter)
-                        .Build();
-                    var yamlRanges = deserializer.Deserialize<List<AfterBeforeDate>>(modal.BulkExport ?? "[]") ?? [];
+                    var csvRanges = modal.BulkExport?.Split('\n')
+                        .Select(line => line.Split(','))
+                        .Select(parts => new AfterBeforeDate(
+                            converter.TryParse(parts.ElementAtOrDefault(0), out var after) ? after.Value : throw new FormatException("Invalid CSV After Date."),
+                            converter.TryParse(parts.ElementAtOrDefault(1), out var before) ? before.Value : throw new FormatException("Invalid CSV Before Date.")
+                        ))
+                        ?? [];
+                    ranges.AddRange(csvRanges);
                 }
-                catch (YamlException)
+                catch (Exception)
                 {
-                    // Fall back to parsing CSV
-                    try
-                    {
-                        var csvRanges = modal.BulkExport?.Split('\n')
-                            .Select(line => line.Split(','))
-                            .Select(parts => new AfterBeforeDate(
-                                converter.TryParse(parts.ElementAtOrDefault(0), out var after) ? after.Value : throw new FormatException("Invalid CSV After Date."),
-                                converter.TryParse(parts.ElementAtOrDefault(1), out var before) ? before.Value : throw new FormatException("Invalid CSV Before Date.")
-                            ))
-                            ?? [];
-                        ranges.AddRange(csvRanges);
-                    }
-                    catch (Exception)
-                    {
-                        throw new FormatException("Invalid Bulk Export format.");
-                    }
+                    throw new FormatException("Invalid Bulk Export format.");
                 }
             }
 
@@ -133,6 +128,5 @@ public sealed partial class ExportModule
             await Context.Interaction.ModifyOriginalResponseAsync(orig => orig.Content = message);
         }
     }
-
 
 }

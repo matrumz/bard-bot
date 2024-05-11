@@ -20,11 +20,6 @@ internal partial record Token(
     public static Token From(string id, object value) => new(id, value);
 }
 
-internal partial record Token
-{
-    public const string DefaultDateTimeFormat = "yyyy-MM-dd-HHmm";
-}
-
 internal static partial class StringExtensions
 {
     internal static string ApplyTokens(this string template, IEnumerable<Token> tokens)
