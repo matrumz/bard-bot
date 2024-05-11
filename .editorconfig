@@ -35,7 +35,7 @@ indent_size = 2
 indent_size = 4
 
 # Xml files
-[*.xml]
+[*.xml,Directory.Build.props,Directory.Build.targets]
 indent_size = 2
 
 [*.csproj]
