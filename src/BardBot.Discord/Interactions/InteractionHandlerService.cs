@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BardBot.Discord.Interactions;
 
-internal sealed class InteractionHandlerService(
+internal sealed partial class InteractionHandlerService(
     DiscordSocketClient discordClient,
     ILogger<InteractionHandlerService> logger,
     InteractionService interactionService,
@@ -23,6 +23,8 @@ internal sealed class InteractionHandlerService(
         discordClient.InteractionCreated += OnInteraction;
         discordClient.Ready += () => interactionService.RegisterCommandsGloballyAsync(deleteMissing: true);
         interactionService.InteractionExecuted += InteractionExecuted;
+
+        RegisterTypeConverters();
 
         await interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
     }
