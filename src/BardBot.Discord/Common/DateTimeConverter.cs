@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace BardBot.Discord.Common;
 
-public sealed class DateTimeConverter
+internal sealed class DateTimeConverter
 {
 
     public DateTime Now { get; init; } = DateTime.Now;
@@ -28,7 +28,7 @@ public sealed class DateTimeConverter
         if (input.Equals("$last"))
         {
             result = Last;
-            return true;
+            return Last is not null;
         }
 
         foreach (var format in CheckFormats)

@@ -26,8 +26,8 @@ public sealed class ChatExportJob(
 
                 var tokens = new List<Token>();
                 tuple.channel.Character.IfNotNull(character => tokens.Add(Token.Character(character)));
-                tuple.range.After.IfNotNull(after => tokens.Add(Token.After(after)));
-                tuple.range.Before.IfNotNull(before => tokens.Add(Token.Before(before)));
+                tokens.Add(Token.After(tuple.range.After));
+                tokens.Add(Token.Before(tuple.range.Before));
 
                 var file = new FileInfo(path.ApplyTokens(tokens));
 

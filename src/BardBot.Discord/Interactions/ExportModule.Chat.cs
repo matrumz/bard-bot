@@ -65,8 +65,8 @@ public sealed partial class ExportModule
             // Add single After/Before fields (if at least one specified)
             if (modal.AfterDate is not null || modal.BeforeDate is not null)
                 ranges.Add(new(
-                    converter.TryParse(modal.AfterDate, out var after) ? after!.Value : DateTime.MinValue,
-                    converter.TryParse(modal.BeforeDate, out var before) ? before!.Value : DateTime.MaxValue
+                    converter.TryParse(modal.AfterDate, out var after) ? after.Value : DateTime.MinValue,
+                    converter.TryParse(modal.BeforeDate, out var before) ? before.Value : DateTime.MaxValue
                 ));
 
             // Add bulk export ranges (if specified)
