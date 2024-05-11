@@ -14,7 +14,7 @@ namespace BardBot.Discord.Interactions;
 public sealed partial class ExportModule
 {
     private DateTime? _lastChatExport;
-    private DateTime? LastChatExport => _lastChatExport ??= chatExportHistoryRepository.Get(Context.Guild.Id)?.OrderByDescending(history => history.Before)?.FirstOrDefault()?.Before;
+    private DateTime? LastChatExport => _lastChatExport ??= chatExportHistoryRepository.LastChatExport(Context.Guild.Id);
 
     [SlashCommand("chat", "Configured channels & threads.")]
     public async Task ExportChatAsync() =>
