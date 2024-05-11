@@ -32,6 +32,13 @@ internal sealed class DateTimeConverter : IYamlTypeConverter
         throw new NotImplementedException();
     }
 
+    public DateTime Parse(string? input)
+    {
+        return TryParse(input, out var result)
+            ? result ?? throw new FormatException("Failed to parse DateTime.")
+            : throw new FormatException("Failed to parse DateTime.");
+    }
+
     public bool TryParse(string? input, out DateTime? result)
     {
         if (string.IsNullOrWhiteSpace(input))

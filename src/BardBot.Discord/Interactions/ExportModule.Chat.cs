@@ -74,8 +74,8 @@ public sealed partial class ExportModule
             // Add single After/Before fields (if at least one specified)
             if (modal.AfterDate is not null || modal.BeforeDate is not null)
                 ranges.Add(new(
-                    converter.TryParse(modal.AfterDate, out var after) ? after.Value : DateTime.MinValue,
-                    converter.TryParse(modal.BeforeDate, out var before) ? before.Value : DateTime.MaxValue
+                    modal.AfterDate is not null ? converter.Parse(modal.AfterDate) : DateTime.MinValue,
+                    modal.BeforeDate is not null ? converter.Parse(modal.BeforeDate) : DateTime.MaxValue
                 ));
 
             // Load bulk ranges
@@ -97,8 +97,8 @@ public sealed partial class ExportModule
                     var csvRanges = modal.BulkExport?.Split('\n')
                         .Select(line => line.Split(','))
                         .Select(parts => new AfterBeforeDate(
-                            converter.TryParse(parts.ElementAtOrDefault(0), out var after) ? after.Value : throw new FormatException("Invalid CSV After Date."),
-                            converter.TryParse(parts.ElementAtOrDefault(1), out var before) ? before.Value : throw new FormatException("Invalid CSV Before Date.")
+                            converter.Parse(parts.ElementAtOrDefault(0)),
+                            converter.Parse(parts.ElementAtOrDefault(1))
                         ))
                         ?? [];
                     ranges.AddRange(csvRanges);
