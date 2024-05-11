@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 
 using BardBot.Discord.Common;
 using BardBot.Discord.Exporting;
@@ -8,6 +9,10 @@ using Discord;
 using Discord.Interactions;
 
 using Microsoft.Extensions.Logging;
+
+using YamlDotNet.Core;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace BardBot.Discord.Interactions;
 
@@ -69,7 +74,45 @@ public sealed partial class ExportModule
                     converter.TryParse(modal.BeforeDate, out var before) ? before.Value : DateTime.MaxValue
                 ));
 
-            // Add bulk export ranges (if specified)
+            // Load bulk ranges
+            // TODO: record exceptions at each level in case all fail -> then report at end
+            // Start with attempting to parse JSON array
+            try
+            {
+                var bulkRanges = JsonSerializer.Deserialize<List<AfterBeforeDate>>(modal.BulkExport ?? "[]") ?? [];
+                ranges.AddRange(bulkRanges);
+            }
+            catch (JsonException)
+            {
+                try
+                {
+                    // Fall back to parsing YAML
+                    var deserializer = new DeserializerBuilder()
+                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .WithTypeConverter(converter)
+                        .Build();
+                    var yamlRanges = deserializer.Deserialize<List<AfterBeforeDate>>(modal.BulkExport ?? "[]") ?? [];
+                }
+                catch (YamlException)
+                {
+                    // Fall back to parsing CSV
+                    try
+                    {
+                        var csvRanges = modal.BulkExport?.Split('\n')
+                            .Select(line => line.Split(','))
+                            .Select(parts => new AfterBeforeDate(
+                                converter.TryParse(parts.ElementAtOrDefault(0), out var after) ? after.Value : throw new FormatException("Invalid CSV After Date."),
+                                converter.TryParse(parts.ElementAtOrDefault(1), out var before) ? before.Value : throw new FormatException("Invalid CSV Before Date.")
+                            ))
+                            ?? [];
+                        ranges.AddRange(csvRanges);
+                    }
+                    catch (Exception)
+                    {
+                        throw new FormatException("Invalid Bulk Export format.");
+                    }
+                }
+            }
 
             // Run the export job
             var job = exportJobFactory.CreateChatExportJob(Context.Guild, ranges);
