@@ -1,6 +1,6 @@
 using System.Text;
 
-using BardBot.Discord.Common;
+using BardBot.Common;
 using BardBot.Discord.Exporting;
 
 using Discord;
@@ -63,19 +63,44 @@ public sealed partial class ExportModule
         {
             await Context.Interaction.RespondAsync("Exporting chat...");
 
-            // Prep datetime converter & aggregate list of ranges
-            var converter = new DateTimeConverter
-            {
-                CheckFormats = modal.DateFormat is not null ? [modal.DateFormat] : [],
-                Last = LastChatExport,
-            };
+            // Prep customizations for DateTimeFactory
+            var dateTimeFactoryAddons = (
+                parsers: new DateTimeFactory.TryParser[] {
+                    bool (string? input, out DateTime result) =>
+                    {
+                        switch (input)
+                        {
+                            case "$now":
+                                result = DateTime.Now;
+                                return true;
+                            case "$last":
+                                result = LastChatExport ?? DateTime.MinValue;
+                                return true;
+                            default:
+                                result = DateTime.MinValue;
+                                return false;
+                        }
+                    }
+                },
+                formats: modal.DateFormat is not null ? new[] { modal.DateFormat } : []
+            );
+
+            // DateTimeFactory shortcut
+            DateTime ParseDateTime(string input) =>
+                dateTimeFactory.Parse(
+                    input,
+                    parsers: dateTimeFactoryAddons.parsers,
+                    formats: dateTimeFactoryAddons.formats
+                );
+
+            // date ranges for export
             var ranges = new List<AfterBeforeDate>();
 
             // Add single After/Before fields (if at least one specified)
             if (modal.AfterDate is not null || modal.BeforeDate is not null)
                 ranges.Add(new(
-                    modal.AfterDate is not null ? converter.Parse(modal.AfterDate) : DateTime.MinValue,
-                    modal.BeforeDate is not null ? converter.Parse(modal.BeforeDate) : DateTime.MaxValue
+                    modal.AfterDate is not null ? ParseDateTime(modal.AfterDate) : DateTime.MinValue,
+                    modal.BeforeDate is not null ? ParseDateTime(modal.BeforeDate) : DateTime.MaxValue
                 ));
 
             // Load bulk ranges
@@ -85,7 +110,10 @@ public sealed partial class ExportModule
             {
                 var deserializer = new DeserializerBuilder()
                     .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                    .WithTypeConverter(converter)
+                    .WithTypeConverter(dateTimeFactory.CreateYamlTypeConverter(
+                        parsers: dateTimeFactoryAddons.parsers,
+                        formats: dateTimeFactoryAddons.formats
+                    ))
                     .Build();
                 var yamlRanges = deserializer.Deserialize<List<AfterBeforeDate>>(modal.BulkExport ?? "[]") ?? [];
             }
@@ -97,8 +125,8 @@ public sealed partial class ExportModule
                     var csvRanges = modal.BulkExport?.Split('\n')
                         .Select(line => line.Split(','))
                         .Select(parts => new AfterBeforeDate(
-                            converter.Parse(parts.ElementAtOrDefault(0)),
-                            converter.Parse(parts.ElementAtOrDefault(1))
+                            ParseDateTime(parts.ElementAt(0)),
+                            ParseDateTime(parts.ElementAt(1))
                         ))
                         ?? [];
                     ranges.AddRange(csvRanges);

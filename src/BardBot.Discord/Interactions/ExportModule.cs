@@ -1,3 +1,4 @@
+using BardBot.Common;
 using BardBot.Discord.Database;
 using BardBot.Discord.Exporting;
 
@@ -11,6 +12,7 @@ namespace BardBot.Discord.Interactions;
 [RequireContext(ContextType.Guild)]
 [RequireOwner]
 public partial class ExportModule(
+    DateTimeFactory dateTimeFactory,
     ExportJobFactory exportJobFactory,
     IChatExportHistoryRepository chatExportHistoryRepository,
     ILogger<ExportModule> logger
