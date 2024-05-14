@@ -97,10 +97,10 @@ public sealed partial class ExportModule
             var ranges = new List<AfterBeforeDate>();
 
             // Add single After/Before fields (if at least one specified)
-            if (modal.AfterDate is not null || modal.BeforeDate is not null)
+            if (!string.IsNullOrWhiteSpace(modal.AfterDate) || !string.IsNullOrWhiteSpace(modal.BeforeDate))
                 ranges.Add(new(
-                    modal.AfterDate is not null ? ParseDateTime(modal.AfterDate) : DateTime.MinValue,
-                    modal.BeforeDate is not null ? ParseDateTime(modal.BeforeDate) : DateTime.MaxValue
+                    !string.IsNullOrWhiteSpace(modal.AfterDate) ? ParseDateTime(modal.AfterDate) : DateTime.MinValue,
+                    !string.IsNullOrWhiteSpace(modal.BeforeDate) ? ParseDateTime(modal.BeforeDate) : DateTime.MaxValue
                 ));
 
             // Load bulk ranges
@@ -123,6 +123,8 @@ public sealed partial class ExportModule
                 try
                 {
                     var csvRanges = modal.BulkExport?.Split('\n')
+                        // Skip empty lines
+                        .Where(line => !string.IsNullOrWhiteSpace(line))
                         .Select(line => line.Split(','))
                         .Select(parts => new AfterBeforeDate(
                             ParseDateTime(parts.ElementAt(0)),
