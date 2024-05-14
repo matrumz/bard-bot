@@ -10,14 +10,14 @@ function source_os_release() {
 
 	# Read the key-value pairs from /etc/os-release
 	while IFS='=' read -r key value; do
-			# Remove surrounding quotes from the value
-			value="${value%\"}"
-			value="${value#\"}"
-			# Check if the key is non-empty
-			if [[ -n $key ]]; then
-					# Set the environment variable with the specified prefix
-					export "${prefix}${key}"="$value"
-			fi
+		# Remove surrounding quotes from the value
+		value="${value%\"}"
+		value="${value#\"}"
+		# Check if the key is non-empty
+		if [[ -n $key ]]; then
+			# Set the environment variable with the specified prefix
+			export "${prefix}${key}"="$value"
+		fi
 	done < /etc/os-release
 }
 source_os_release

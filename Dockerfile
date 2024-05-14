@@ -22,8 +22,8 @@ apt-get install -y --no-install-recommends \
 	vim
 DOCKERFILE_EOF
 
-# RUN --mount=type=bind,source=./dockerfile.d/mongodb.sh,target=/tmp/mongodb.sh \
-# 	/tmp/mongodb.sh install latest
+# COPY rootfs /
+# RUN mongodb.sh install latest
 
 # Create developer user
 ARG DEVCONTAINER_USER_NAME=dev
