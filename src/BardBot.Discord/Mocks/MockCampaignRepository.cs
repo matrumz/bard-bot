@@ -19,7 +19,7 @@ internal class MockCampaignRepository : ICampaignRepository
 
     public Campaign? Get(ulong guildId)
     {
-        return _campaigns.SingleOrDefault(c => c.Channels.Any(ch => ch.GuildId == guildId));
+        return _campaigns.SingleOrDefault(c => c.GuildId == guildId);
     }
 
 }
