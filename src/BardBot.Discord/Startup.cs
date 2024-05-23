@@ -13,7 +13,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace BardBot.Discord.Hosting;
+namespace BardBot.Discord;
 
 public sealed class Startup : IStartup
 {
