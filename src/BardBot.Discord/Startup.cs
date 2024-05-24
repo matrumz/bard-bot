@@ -41,7 +41,7 @@ public sealed class Startup : IStartup
         services.AddHostedService<ConnectionHandlerService>();
         services.AddHostedService<InteractionHandlerService>();
         services.AddSingleton<ExportJobFactory>();
-        services.AddTransient<ChatExportJob>();
+        services.AddTransient<ChannelExporter>();
         services.AddTransient<ICampaignRepository, MockCampaignRepository>();
         services.AddTransient<IChatExportHistoryRepository, MockChatExportHistoryRepository>();
 

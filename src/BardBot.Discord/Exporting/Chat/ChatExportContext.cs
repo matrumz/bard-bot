@@ -4,7 +4,7 @@ using Discord;
 
 namespace BardBot.Discord.Exporting.Chat;
 
-public record ChatExportContext(
+internal record ChatExportContext(
     IGuild Guild,
     IMessageChannel Channel,
     string OutputPath,

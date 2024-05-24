@@ -1,7 +1,11 @@
 using System.Text;
 
 using BardBot.Common;
+using BardBot.Common.Extensions;
+using BardBot.Discord.Database.Models;
 using BardBot.Discord.Exporting;
+using BardBot.Discord.Exporting.Chat;
+using BardBot.Discord.Exporting.PathTokens;
 
 using Discord;
 using Discord.Interactions;
@@ -18,6 +22,8 @@ public sealed partial class ExportModule
 {
     private DateTime? _lastChatExport;
     private DateTime? LastChatExport => _lastChatExport ??= chatExportHistoryRepository.LastChatExport(Context.Guild.Id);
+
+    private Campaign? Campaign => campaignRepository.Get(Context.Guild.Id);
 
     [SlashCommand("chat", "Configured channels & threads.")]
     public async Task ExportChatAsync() =>
@@ -54,15 +60,8 @@ public sealed partial class ExportModule
         [ModalTextInput("bulk_export", style: TextInputStyle.Paragraph, placeholder: "CSV or YAML Array of after/before dates")]
         public string? BulkExport { get; set; }
 
-    }
-
-    [ModalInteraction(ChatExportModal.CustomId)]
-    public async Task ModalResponseAsync(ChatExportModal modal)
-    {
-        try
+        public IEnumerable<AfterBeforeDate> GetDateRanges(DateTimeFactory dateTimeFactory, DateTime? lastChatExport)
         {
-            await Context.Interaction.RespondAsync("Exporting chat...");
-
             // Prep customizations for DateTimeFactory
             var dateTimeFactoryAddons = (
                 parsers: new DateTimeFactory.TryParser[] {
@@ -74,7 +73,7 @@ public sealed partial class ExportModule
                                 result = DateTime.Now;
                                 return true;
                             case "$last":
-                                result = LastChatExport ?? DateTime.MinValue;
+                                result = lastChatExport ?? DateTime.MinValue;
                                 return true;
                             default:
                                 result = DateTime.MinValue;
@@ -82,7 +81,7 @@ public sealed partial class ExportModule
                         }
                     }
                 },
-                formats: modal.DateFormat is not null ? new[] { modal.DateFormat } : []
+                formats: DateFormat is not null ? new[] { DateFormat } : []
             );
 
             // DateTimeFactory shortcut
@@ -97,10 +96,10 @@ public sealed partial class ExportModule
             var ranges = new List<AfterBeforeDate>();
 
             // Add single After/Before fields (if at least one specified)
-            if (!string.IsNullOrWhiteSpace(modal.AfterDate) || !string.IsNullOrWhiteSpace(modal.BeforeDate))
+            if (!string.IsNullOrWhiteSpace(AfterDate) || !string.IsNullOrWhiteSpace(BeforeDate))
                 ranges.Add(new(
-                    !string.IsNullOrWhiteSpace(modal.AfterDate) ? ParseDateTime(modal.AfterDate) : DateTime.MinValue,
-                    !string.IsNullOrWhiteSpace(modal.BeforeDate) ? ParseDateTime(modal.BeforeDate) : DateTime.MaxValue
+                    !string.IsNullOrWhiteSpace(AfterDate) ? ParseDateTime(AfterDate) : DateTime.MinValue,
+                    !string.IsNullOrWhiteSpace(BeforeDate) ? ParseDateTime(BeforeDate) : DateTime.MaxValue
                 ));
 
             // Load bulk ranges
@@ -115,14 +114,14 @@ public sealed partial class ExportModule
                         formats: dateTimeFactoryAddons.formats
                     ))
                     .Build();
-                var yamlRanges = deserializer.Deserialize<List<AfterBeforeDate>>(modal.BulkExport ?? "[]") ?? [];
+                var yamlRanges = deserializer.Deserialize<List<AfterBeforeDate>>(BulkExport ?? "[]") ?? [];
             }
             catch (YamlException)
             {
                 // Fall back to parsing CSV
                 try
                 {
-                    var csvRanges = modal.BulkExport?.Split('\n')
+                    var csvRanges = BulkExport?.Split('\n')
                         // Skip empty lines
                         .Where(line => !string.IsNullOrWhiteSpace(line))
                         .Select(line => line.Split(','))
@@ -138,6 +137,45 @@ public sealed partial class ExportModule
                     throw new FormatException("Invalid Bulk Export format.");
                 }
             }
+
+            return ranges;
+        }
+    }
+
+    [ModalInteraction(ChatExportModal.CustomId)]
+    public async Task ModalResponseAsync(ChatExportModal modal)
+    {
+        try
+        {
+            await Context.Interaction.RespondAsync("Exporting chat...");
+
+            var ranges = modal.GetDateRanges(dateTimeFactory, LastChatExport);
+
+            if (Campaign is null)
+                throw new InvalidOperationException("No campaign found for this guild.");
+            var contexts = Campaign
+                .Channels.Values
+                .Where(channel => channel.Labels.Any(label => label.Name == "game-chat"))
+                .CrossJoin(ranges)
+                .Select(((Channel channel, AfterBeforeDate range) tuple) =>
+                {
+                    // build export path
+                    var tokens = new List<Token>();
+                    tuple.channel.Character.IfNotNull(character => tokens.Add(Token.Character(character)));
+                    tokens.Add(Token.After(tuple.range.After));
+                    tokens.Add(Token.Before(tuple.range.Before));
+                    var path = Campaign.ExportPathTemplates?.Chats?.ApplyTokens(tokens) ?? throw new InvalidOperationException("No chat export path template found.");
+
+                    // assemble export context
+                    return new ChatExportContext(
+                        Guild: Context.Guild,
+                        Channel: (IMessageChannel)Context.Client.GetChannel(tuple.channel.Id),
+                        OutputPath: path,
+                        Format: ChatExportFormat.PlainText, // TODO: support other formats
+                        After: tuple.range.After,
+                        Before: tuple.range.Before
+                    );
+                });
 
             // Run the export job
             var job = exportJobFactory.CreateChatExportJob(Context.Guild, ranges);

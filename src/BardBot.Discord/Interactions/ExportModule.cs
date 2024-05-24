@@ -14,6 +14,7 @@ namespace BardBot.Discord.Interactions;
 public partial class ExportModule(
     DateTimeFactory dateTimeFactory,
     ExportJobFactory exportJobFactory,
+    ICampaignRepository campaignRepository,
     IChatExportHistoryRepository chatExportHistoryRepository,
     ILogger<ExportModule> logger
 ) : InteractionModuleBase<SocketInteractionContext>

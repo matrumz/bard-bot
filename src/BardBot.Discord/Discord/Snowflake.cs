@@ -11,13 +11,19 @@ internal partial record Snowflake
     public static implicit operator Snowflake(ulong value) => new(value);
 }
 
+// As DateTime
+internal partial record Snowflake
+{
+    public static implicit operator DateTime(Snowflake snowflake) => SnowflakeUtils.FromSnowflake(snowflake.Value).DateTime;
+    public static implicit operator Snowflake(DateTime value) => new(SnowflakeUtils.ToSnowflake(value));
+}
+
 // As DateTimeOffset
 internal partial record Snowflake
 {
     public static implicit operator DateTimeOffset(Snowflake snowflake) => SnowflakeUtils.FromSnowflake(snowflake.Value);
     public static implicit operator Snowflake(DateTimeOffset value) => new(SnowflakeUtils.ToSnowflake(value));
 }
-
 
 // Comparison
 internal partial record Snowflake : IComparable<Snowflake>, IComparable
