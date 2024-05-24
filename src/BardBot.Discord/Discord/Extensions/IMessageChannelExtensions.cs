@@ -1,0 +1,37 @@
+using Discord;
+
+namespace BardBot.Discord.Discord.Extensions;
+
+public static class IMessageChannelExtensions
+{
+
+    public static async IAsyncEnumerable<IMessage> GetMessagesAsync(
+        this IMessageChannel channel,
+        DateTime? after = null,
+        DateTime? before = null,
+        int batchSize = 100,
+        RequestOptions? options = null
+    )
+    {
+        after ??= DateTime.MinValue;
+        before ??= DateTime.MaxValue;
+        ulong scanStart = SnowflakeUtils.ToSnowflake(after.Value);
+        var done = false;
+        do
+        {
+            // fetch the next batch of messages
+            var messagesBatch = await channel.GetMessagesAsync(scanStart, Direction.After, limit: batchSize, options: options).FlattenAsync();
+            // note where we'll start the next batch (if applicable)
+            scanStart = messagesBatch.Last().Id;
+            // reduce the batch based on the before parameter
+            messagesBatch = messagesBatch.Where(m => m.Timestamp < before.Value);
+            // stop if there are no more messages
+            done = !messagesBatch.Any();
+            // yield the messages
+            foreach (var message in messagesBatch)
+                yield return message;
+        } while (!done);
+    }
+
+}
+
