@@ -16,6 +16,8 @@ public class Campaign
 
     public ExportPathTemplates? ExportPathTemplates { get; set; }
 
+    public TimeZoneInfo TimeZone { get; set; } = TimeZoneInfo.Utc;
+
 }
 
 public class Channel : ILabelled
@@ -29,6 +31,8 @@ public class Channel : ILabelled
     // Optional
 
     public string? Character { get; set; }
+
+    public bool? ExportableGameChat { get; set; }
 
     public IEnumerable<Label> Labels { get; set; } = [];
 

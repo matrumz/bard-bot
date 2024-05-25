@@ -3,6 +3,7 @@
         "appsettings",
         "Devcontainer",
         "formattable",
+        "Postamble",
         "Serilog"
     ],
     "editor.formatOnSave": true,

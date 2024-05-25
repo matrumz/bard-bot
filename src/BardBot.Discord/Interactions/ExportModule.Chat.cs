@@ -149,13 +149,17 @@ public sealed partial class ExportModule
         {
             await Context.Interaction.RespondAsync("Exporting chat...");
 
-            var ranges = modal.GetDateRanges(dateTimeFactory, LastChatExport);
-
+            // validate requirements for an export
             if (Campaign is null)
                 throw new InvalidOperationException("No campaign found for this guild.");
+
+            // get list of export time ranges
+            var ranges = modal.GetDateRanges(dateTimeFactory, LastChatExport);
+
+            // cross-join the date ranges with the channels to export to determine work needed
             var contexts = Campaign
                 .Channels.Values
-                .Where(channel => channel.Labels.Any(label => label.Name == "game-chat"))
+                .Where(channel => channel.ExportableGameChat ?? false)
                 .CrossJoin(ranges)
                 .Select(((Channel channel, AfterBeforeDate range) tuple) =>
                 {
@@ -171,7 +175,7 @@ public sealed partial class ExportModule
                         Guild: Context.Guild,
                         Channel: (IMessageChannel)Context.Client.GetChannel(tuple.channel.Id),
                         OutputPath: path,
-                        Format: ChatExportFormat.PlainText, // TODO: support other formats
+                        Format: ChatExportFormat.Markdown, // TODO: support other formats
                         After: tuple.range.After,
                         Before: tuple.range.Before
                     );

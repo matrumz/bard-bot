@@ -10,4 +10,14 @@ internal interface IMessageFormatter
         CancellationToken cancellationToken = default
     );
 
+    ValueTask<string> FormatPreambleAsync(
+        ExportPreamble preamble,
+        CancellationToken cancellationToken = default
+    );
+
+    ValueTask<string> FormatPostambleAsync(
+        ExportPostamble postamble,
+        CancellationToken cancellationToken = default
+    );
+
 }
