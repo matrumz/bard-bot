@@ -30,6 +30,9 @@ public class Channel : ILabelled
 
     // Optional
 
+    // TODO
+    // public bool? AutoExportThreads { get; set; }
+
     public string? Character { get; set; }
 
     public bool? ExportableGameChat { get; set; }

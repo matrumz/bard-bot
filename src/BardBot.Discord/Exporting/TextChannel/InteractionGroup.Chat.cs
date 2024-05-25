@@ -170,14 +170,14 @@ public partial class InteractionGroup
                     tuple.channel.Character.IfNotNull(character => tokens.Add(Token.Character(character)));
                     tokens.Add(Token.After(tuple.range.After));
                     tokens.Add(Token.Before(tuple.range.Before));
-                    var path = Campaign.ExportPathTemplates?.Chats?.ApplyTokens(tokens) ?? throw new InvalidOperationException("No chat export path template found.");
+                    var path = new FileInfo(Campaign.ExportPathTemplates?.Chats?.ApplyTokens(tokens) ?? throw new InvalidOperationException("No chat export path template found."));
 
                     // assemble export context
                     return new ExportContext(
                         Guild: Context.Guild,
-                        Channel: (IMessageChannel)Context.Client.GetChannel(tuple.channel.Id),
-                        P: path,
-                        Format: ExportFormat.PlainText, // TODO: support other formats
+                        Channel: (Context.Client.GetChannel(tuple.channel.Id) as IMessageChannel) ?? throw new InvalidOperationException($"Channel {tuple.channel.Id} is not a message channel."),
+                        OutputFile: path,
+                        Format: ChatExportFormat.Markdown, // TODO: support other formats
                         After: tuple.range.After,
                         Before: tuple.range.Before
                     );

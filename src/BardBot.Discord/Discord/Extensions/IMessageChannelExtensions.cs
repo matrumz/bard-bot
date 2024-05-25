@@ -1,4 +1,5 @@
 using Discord;
+using Discord.WebSocket;
 
 namespace BardBot.Discord.Discord.Extensions;
 
@@ -39,11 +40,22 @@ public static class IMessageChannelExtensions
             : null
             ;
 
-    public static ITextChannel GetSelfOrParentTextChannel(this ITextChannel channel)
-        => channel is IThreadChannel threadChannel
-            ? threadChannel. //resume-here
+    public static string? GetTopic(this IMessageChannel channel)
+        => channel is ITextChannel textChannel
+            ? textChannel.Topic
+            : null
+            ;
+
+    public static IMessageChannel GetSelfChannelOrParentChannel(this IMessageChannel channel)
+        => channel is SocketThreadChannel threadChannel
+            ? (IMessageChannel)threadChannel.ParentChannel
             : channel
             ;
 
-}
+    public static IThreadChannel? GetThread(this IMessageChannel channel)
+        => channel is IThreadChannel threadChannel
+            ? threadChannel
+            : null
+            ;
 
+}
