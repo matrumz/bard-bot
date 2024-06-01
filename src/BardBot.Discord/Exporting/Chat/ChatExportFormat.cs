@@ -2,7 +2,7 @@ namespace BardBot.Discord.Exporting.Chat;
 
 internal enum ChatExportFormat
 {
-    Markdown
+    PlainText
 }
 
 internal static class ChatExportFormatExtensions
@@ -10,7 +10,7 @@ internal static class ChatExportFormatExtensions
 
     public static string GetFileExtension(this ChatExportFormat format) => format switch
     {
-        ChatExportFormat.Markdown => "md",
+        ChatExportFormat.PlainText => "txt",
         _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
     };
 

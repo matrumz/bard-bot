@@ -20,4 +20,8 @@ internal interface IMessageFormatter
         CancellationToken cancellationToken = default
     );
 
+    ValueTask<string> SpacerAsync(
+        CancellationToken cancellationToken = default
+    );
+
 }

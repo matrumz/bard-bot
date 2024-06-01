@@ -175,7 +175,7 @@ public sealed partial class ExportModule
                         Guild: Context.Guild,
                         Channel: (IMessageChannel)Context.Client.GetChannel(tuple.channel.Id),
                         OutputPath: path,
-                        Format: ChatExportFormat.Markdown, // TODO: support other formats
+                        Format: ChatExportFormat.PlainText, // TODO: support other formats
                         After: tuple.range.After,
                         Before: tuple.range.Before
                     );
