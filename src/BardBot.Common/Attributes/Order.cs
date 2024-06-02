@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace BardBot.Common.Attributes;
@@ -14,13 +15,13 @@ public sealed class OrderAttribute(
 
 public interface IContainsOrderedProperties
 {
-    public IReadOnlyList<(string, object?)> OrderedProperties() =>
+    public IReadOnlyList<PropertyInfo> OrderedProperties() =>
         GetType().GetProperties()
             .Where(property => Attribute.IsDefined(property, typeof(OrderAttribute)))
             .Select(property => (property, attribute: (OrderAttribute)Attribute.GetCustomAttribute(property, typeof(OrderAttribute))!))
             .OrderBy(pa => pa.attribute.File)
             .ThenBy(pa => pa.attribute.Order)
-            .Select(pa => (pa.property.Name, pa.property.GetValue(this)))
+            .Select(pa => pa.property)
             .ToArray()
         ;
 }
