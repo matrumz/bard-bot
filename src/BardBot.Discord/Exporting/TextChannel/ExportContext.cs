@@ -2,13 +2,12 @@ using BardBot.Discord.Discord;
 
 using Discord;
 
-namespace BardBot.Discord.Exporting.Chat;
+namespace BardBot.Discord.Exporting.TextChannel;
 
-internal record ChatExportContext(
+internal record ExportContext(
     IGuild Guild,
     IMessageChannel Channel,
-    string OutputPath,
-    ChatExportFormat Format,
+    ExportFormat Format,
     Snowflake After,
     Snowflake Before
 );
