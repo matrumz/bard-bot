@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-BardBot-3e6670f1-4da0-42ac-90b5-ec345dea6774</UserSecretsId>
   </PropertyGroup>
 
