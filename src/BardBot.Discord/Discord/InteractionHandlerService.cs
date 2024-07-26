@@ -9,7 +9,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BardBot.Discord.Interactions;
+namespace BardBot.Discord.Discord;
 
 internal sealed partial class InteractionHandlerService(
     DiscordSocketClient discordClient,
@@ -23,8 +23,6 @@ internal sealed partial class InteractionHandlerService(
         discordClient.InteractionCreated += OnInteraction;
         discordClient.Ready += () => interactionService.RegisterCommandsGloballyAsync(deleteMissing: true);
         interactionService.InteractionExecuted += InteractionExecuted;
-
-        RegisterTypeConverters();
 
         await interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
     }

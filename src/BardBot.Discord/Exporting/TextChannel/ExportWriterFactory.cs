@@ -9,6 +9,19 @@ internal class ExportWriterFactory(
 
     public ExportWriter GetExportWriter(
         ExportFormat format,
+        string localFilePath
+    )
+        => GetExportWriter(
+            format: format,
+            writer: new StreamWriter(localFilePath, new FileStreamOptions()
+            {
+                Mode = FileMode.Create,
+                Share = FileShare.Read,
+            })
+        );
+
+    public ExportWriter GetExportWriter(
+        ExportFormat format,
         TextWriter writer
     ) =>
         format switch

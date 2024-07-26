@@ -19,7 +19,7 @@ internal sealed class ExportWriter(
     public async ValueTask WriteMessageAsync(IMessage message, CancellationToken ct = default) =>
         await writer.WriteAsync(await messageFormatter.FormatMessageAsync(message, ct));
 
-    public async ValueTask DisposeAsync() =>
+    async ValueTask IAsyncDisposable.DisposeAsync() =>
         await writer.DisposeAsync();
 
 }

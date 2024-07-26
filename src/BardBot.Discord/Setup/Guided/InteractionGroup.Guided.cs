@@ -1,10 +1,8 @@
 using Discord.Interactions;
 
-using Microsoft.Extensions.Logging;
+namespace BardBot.Discord.Setup;
 
-namespace BardBot.Discord.Interactions;
-
-public partial class SetupModule
+public partial class InteractionGroup
 {
     [SlashCommand("start", "Start the setup wizard")]
     public async Task StartSetupAsync()

@@ -33,5 +33,17 @@ public static class IMessageChannelExtensions
         } while (!done);
     }
 
+    public static ICategoryChannel? GetCategory(this IMessageChannel channel)
+        => channel is INestedChannel nestedChannel
+            ? nestedChannel.GetCategoryAsync().Result
+            : null
+            ;
+
+    public static ITextChannel GetSelfOrParentTextChannel(this ITextChannel channel)
+        => channel is IThreadChannel threadChannel
+            ? threadChannel. //resume-here
+            : channel
+            ;
+
 }
 

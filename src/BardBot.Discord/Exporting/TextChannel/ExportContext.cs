@@ -9,5 +9,6 @@ internal record ExportContext(
     IMessageChannel Channel,
     ExportFormat Format,
     Snowflake After,
-    Snowflake Before
+    Snowflake Before,
+    string Path
 );

@@ -1,11 +1,10 @@
 using System.Text;
 
-using BardBot.Common;
 using BardBot.Common.Extensions;
+using BardBot.Common;
 using BardBot.Discord.Database.Models;
-using BardBot.Discord.Exporting;
-using BardBot.Discord.Exporting.Chat;
 using BardBot.Discord.Exporting.PathTokens;
+using BardBot.Discord.Exporting.TextChannel;
 
 using Discord;
 using Discord.Interactions;
@@ -15,10 +14,13 @@ using Microsoft.Extensions.Logging;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using BardBot.Discord.Database;
 
-namespace BardBot.Discord.Interactions;
+// Ignore the directory/namespace mismatch: this is an extension of the grouped class
+#pragma warning disable IDE0130
+namespace BardBot.Discord.Exporting;
 
-public sealed partial class ExportModule
+public partial class InteractionGroup
 {
     private DateTime? _lastChatExport;
     private DateTime? LastChatExport => _lastChatExport ??= chatExportHistoryRepository.LastChatExport(Context.Guild.Id);
@@ -171,11 +173,11 @@ public sealed partial class ExportModule
                     var path = Campaign.ExportPathTemplates?.Chats?.ApplyTokens(tokens) ?? throw new InvalidOperationException("No chat export path template found.");
 
                     // assemble export context
-                    return new ChatExportContext(
+                    return new ExportContext(
                         Guild: Context.Guild,
                         Channel: (IMessageChannel)Context.Client.GetChannel(tuple.channel.Id),
-                        OutputPath: path,
-                        Format: ChatExportFormat.PlainText, // TODO: support other formats
+                        P: path,
+                        Format: ExportFormat.PlainText, // TODO: support other formats
                         After: tuple.range.After,
                         Before: tuple.range.Before
                     );
