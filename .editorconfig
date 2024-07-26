@@ -38,9 +38,17 @@ indent_size = 4
 [*.xml,Directory.Build.props,Directory.Build.targets]
 indent_size = 2
 
+# C# projects
 [*.csproj]
+end_of_line = crlf
 indent_size = 2
 indent_style = space
+
+# C# solutions
+[*.sln]
+end_of_line = crlf
+indent_style = tab
+indent_size = 2
 
 # C# files
 [*.cs]
