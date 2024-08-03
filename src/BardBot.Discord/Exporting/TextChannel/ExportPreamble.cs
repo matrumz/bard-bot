@@ -1,6 +1,6 @@
 namespace BardBot.Discord.Exporting.TextChannel;
 
-internal record ExportPreamble(
+public record ExportPreamble(
     /// <summary> The name of the guild. </summary>
     string Guild,
     /// <summary> The name of the category. </summary>

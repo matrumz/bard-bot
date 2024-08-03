@@ -1,15 +1,30 @@
+using BardBot.Discord.Database;
 using BardBot.Discord.Database.Models;
 
-namespace BardBot.Discord.Database;
-
-internal class MockChatExportHistoryRepository : IChatExportHistoryRepository
+namespace BardBot.Discord.Mocks
 {
-    private IEnumerable<ChatExportHistory> _chatExportHistories = [
-    ];
 
-    public IEnumerable<ChatExportHistory>? Get(ulong guildId)
+    internal class MockChatExportHistoryRepository(
+        DiscordOptions discordOptions
+    ) : IChatExportHistoryRepository
     {
-        return _chatExportHistories.Where(c => c.GuildId == guildId);
+        private readonly IEnumerable<ChatExportHistory> _repo = discordOptions.MockChatExportHistoryRepository;
+
+        public IEnumerable<ChatExportHistory>? Get(ulong guildId)
+        {
+            return _repo.Where(c => c.GuildId == guildId);
+        }
+
+    }
+
+}
+
+namespace BardBot.Discord
+{
+
+    internal partial record DiscordOptions
+    {
+        public List<ChatExportHistory> MockChatExportHistoryRepository { get; init; } = [];
     }
 
 }

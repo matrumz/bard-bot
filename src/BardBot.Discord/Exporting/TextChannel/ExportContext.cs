@@ -4,11 +4,16 @@ using Discord;
 
 namespace BardBot.Discord.Exporting.TextChannel;
 
-internal record ExportContext(
+public partial record ExportContext(
     IGuild Guild,
     IMessageChannel Channel,
     ExportFormat Format,
     Snowflake After,
     Snowflake Before,
-    string Path
-);
+    FileInfo File
+)
+{
+
+    public IProgress<int>? Progress { get; init; }
+
+};

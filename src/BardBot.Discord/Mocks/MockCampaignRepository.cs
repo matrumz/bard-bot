@@ -1,25 +1,39 @@
+using BardBot.Discord.Database;
 using BardBot.Discord.Database.Models;
 
-namespace BardBot.Discord.Database;
-
-internal class MockCampaignRepository : ICampaignRepository
+namespace BardBot.Discord.Mocks
 {
-    private readonly List<Campaign> _campaigns = [
-    ];
 
-    public IEnumerable<Campaign> Get()
+    internal class MockCampaignRepository(
+        DiscordOptions discordOptions
+    ) : ICampaignRepository
     {
-        return _campaigns;
+        private readonly IEnumerable<Campaign> _repo = discordOptions.MockCampaignRepository;
+
+        public IEnumerable<Campaign> Get()
+        {
+            return _repo;
+        }
+
+        public Campaign? Get(Guid campaignId)
+        {
+            return _repo.FirstOrDefault(c => c.Id == campaignId);
+        }
+
+        public Campaign? Get(ulong guildId)
+        {
+            return _repo.SingleOrDefault(c => c.GuildId == guildId);
+        }
+
     }
+}
 
-    public Campaign? Get(Guid campaignId)
-    {
-        return _campaigns.FirstOrDefault(c => c.Id == campaignId);
-    }
+namespace BardBot.Discord
+{
 
-    public Campaign? Get(ulong guildId)
+    internal partial record DiscordOptions
     {
-        return _campaigns.SingleOrDefault(c => c.GuildId == guildId);
+        public List<Campaign> MockCampaignRepository { get; init; } = [];
     }
 
 }

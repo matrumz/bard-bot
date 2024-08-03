@@ -2,7 +2,7 @@ using Discord;
 
 namespace BardBot.Discord.Exporting.TextChannel;
 
-internal sealed class ExportWriter(
+public sealed class ExportWriter(
     IMessageFormatter messageFormatter,
     IPostambleFormatter postambleFormatter,
     IPreambleFormatter preambleFormatter,

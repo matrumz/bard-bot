@@ -1,3 +1,3 @@
 namespace BardBot.Discord.Exporting.TextChannel;
 
-internal record ExportPostamble;
+public record ExportPostamble;

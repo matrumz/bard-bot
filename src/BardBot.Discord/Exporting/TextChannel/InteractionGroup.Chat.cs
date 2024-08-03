@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using BardBot.Discord.Database;
 
 // Ignore the directory/namespace mismatch: this is an extension of the grouped class
 #pragma warning disable IDE0130
@@ -170,27 +169,34 @@ public partial class InteractionGroup
                     tuple.channel.Character.IfNotNull(character => tokens.Add(Token.Character(character)));
                     tokens.Add(Token.After(tuple.range.After));
                     tokens.Add(Token.Before(tuple.range.Before));
-                    var path = new FileInfo(Campaign.ExportPathTemplates?.Chats?.ApplyTokens(tokens) ?? throw new InvalidOperationException("No chat export path template found."));
+                    tokens.Add(Token.Extension(ExportFormat.PlainText.GetFileExtension())); // TODO: support other formats
+                    var file = new FileInfo(Campaign.ExportPathTemplates?.Chats?.ApplyTokens(tokens) ?? throw new InvalidOperationException("No chat export path template found."));
 
                     // assemble export context
                     return new ExportContext(
                         Guild: Context.Guild,
                         Channel: (Context.Client.GetChannel(tuple.channel.Id) as IMessageChannel) ?? throw new InvalidOperationException($"Channel {tuple.channel.Id} is not a message channel."),
-                        OutputFile: path,
-                        Format: ChatExportFormat.Markdown, // TODO: support other formats
+                        File: file,
+                        Format: ExportFormat.PlainText, // TODO: support other formats
                         After: tuple.range.After,
                         Before: tuple.range.Before
-                    );
+                    )
+                    {
+                        Progress = new Progress<int>()
+                    };
                 });
 
-            // Run the export job
-            var job = exportJobFactory.CreateChatExportJob(Context.Guild, ranges);
-            var files = await job.ToFiles();
+            // Run the export jobs
+            await Task.WhenAll(
+                contexts
+                    .Select(exportJobFactory.GetExportJob)
+                    .Select(job => job.ExportAsync())
+            );
 
             // Report job results
             var message = new StringBuilder()
-                .AppendLine($"Exported {files.Count()} files{(files.Any() ? ":" : ".")}")
-                .AppendJoin('\n', files.Select(file => Format.Sanitize(file.FullName)))
+                .AppendLine($"Exported {contexts.Count()} files{(contexts.Any() ? ":" : ".")}")
+                .AppendJoin('\n', contexts.Select(context => Format.Sanitize($"{context.File.FullName}: (count not yet provided)")))
                 .ToString();
             await Context.Interaction.ModifyOriginalResponseAsync(orig => orig.Content = message);
 

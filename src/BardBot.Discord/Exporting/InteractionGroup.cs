@@ -1,6 +1,7 @@
 using BardBot.Common;
 using BardBot.Discord.Database;
 using BardBot.Discord.Exporting;
+using BardBot.Discord.Exporting.TextChannel;
 
 using Discord.Interactions;
 
@@ -13,6 +14,7 @@ namespace BardBot.Discord.Exporting;
 [RequireOwner]
 public partial class InteractionGroup(
     DateTimeFactory dateTimeFactory,
+    ExportJobFactory exportJobFactory,
     ICampaignRepository campaignRepository,
     IChatExportHistoryRepository chatExportHistoryRepository,
     ILogger<InteractionGroup> logger

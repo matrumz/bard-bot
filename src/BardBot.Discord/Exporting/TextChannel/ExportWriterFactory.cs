@@ -2,18 +2,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BardBot.Discord.Exporting.TextChannel;
 
-internal class ExportWriterFactory(
+public sealed class ExportWriterFactory(
     IServiceProvider serviceProvider
 )
 {
 
     public ExportWriter GetExportWriter(
         ExportFormat format,
-        string localFilePath
+        FileInfo file
     )
         => GetExportWriter(
             format: format,
-            writer: new StreamWriter(localFilePath, new FileStreamOptions()
+            writer: new StreamWriter(file.FullName, new FileStreamOptions()
             {
                 Mode = FileMode.Create,
                 Share = FileShare.Read,

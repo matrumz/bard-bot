@@ -1,9 +1,9 @@
 using BardBot.Common.Hosting;
 using BardBot.Common.Hosting.Extensions;
-using BardBot.Discord.Configuration;
 using BardBot.Discord.Database;
 using BardBot.Discord.Discord;
 using BardBot.Discord.Exporting.TextChannel;
+using BardBot.Discord.Mocks;
 
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -33,12 +33,14 @@ public sealed class Startup : IStartup
 
         // BardBot
         services.AddOptions<DiscordOptions>()
-            .BindConfiguration(DiscordOptions.Discord)
+            .BindConfiguration(DiscordOptions.ConfigSectionPath)
             .ValidateDataAnnotations()
             .AddValueAsSingleton();
         services.AddHostedService<ConnectionHandlerService>();
         services.AddHostedService<InteractionHandlerService>();
         services.AddSingleton<ExportWriterFactory>();
+
+        // Mocks
         services.AddTransient<ICampaignRepository, MockCampaignRepository>();
         services.AddTransient<IChatExportHistoryRepository, MockChatExportHistoryRepository>();
 

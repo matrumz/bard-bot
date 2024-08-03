@@ -10,6 +10,7 @@ internal partial record Token(
     public static Token After(DateTime value) => new("after", value);
     public static Token Before(DateTime value) => new("before", value);
     public static Token Character(string value) => new("character", value);
+    public static Token Extension(string value) => new("extension", value);
 
     /// <summary>
     /// Create a new custom token with the given id and value.

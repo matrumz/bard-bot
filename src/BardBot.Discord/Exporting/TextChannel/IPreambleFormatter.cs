@@ -1,6 +1,6 @@
 namespace BardBot.Discord.Exporting.TextChannel;
 
-internal interface IPreambleFormatter
+public interface IPreambleFormatter
 {
 
     ValueTask<string> FormatPreambleAsync(ExportPreamble preamble, CancellationToken cancellationToken = default);

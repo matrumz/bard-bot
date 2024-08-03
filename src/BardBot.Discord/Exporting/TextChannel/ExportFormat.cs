@@ -1,6 +1,6 @@
 namespace BardBot.Discord.Exporting.TextChannel;
 
-internal enum ExportFormat
+public enum ExportFormat
 {
     PlainText
 }
