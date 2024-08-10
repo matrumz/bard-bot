@@ -1,6 +1,6 @@
 using System.Reflection;
 
-using BardBot.Discord.Logging.Extensions;
+using BardBot.Discord.Common;
 
 using Discord;
 using Discord.Interactions;

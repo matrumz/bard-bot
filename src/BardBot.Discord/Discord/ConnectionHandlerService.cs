@@ -1,5 +1,4 @@
 using BardBot.Discord.Common;
-using BardBot.Discord.Logging.Extensions;
 
 using Discord;
 using Discord.WebSocket;
