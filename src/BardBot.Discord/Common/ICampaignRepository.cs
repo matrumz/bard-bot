@@ -1,6 +1,4 @@
-using BardBot.Discord.Database.Models;
-
-namespace BardBot.Discord.Database;
+namespace BardBot.Discord.Common;
 
 public interface ICampaignRepository
 {

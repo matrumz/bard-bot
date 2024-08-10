@@ -1,6 +1,4 @@
-using BardBot.Discord.Database.Models;
-
-namespace BardBot.Discord.Database;
+namespace BardBot.Discord.Exporting;
 
 /// <summary>
 /// Standard interface for a repository of chat export history.

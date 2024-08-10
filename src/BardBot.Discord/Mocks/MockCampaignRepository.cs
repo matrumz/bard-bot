@@ -1,8 +1,7 @@
-using BardBot.Discord.Database;
-using BardBot.Discord.Database.Models;
-
 namespace BardBot.Discord.Mocks
 {
+
+    using BardBot.Discord.Common;
 
     internal class MockCampaignRepository(
         DiscordOptions discordOptions
@@ -28,7 +27,7 @@ namespace BardBot.Discord.Mocks
     }
 }
 
-namespace BardBot.Discord
+namespace BardBot.Discord.Common
 {
 
     internal partial record DiscordOptions

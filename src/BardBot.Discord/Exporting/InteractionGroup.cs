@@ -1,6 +1,5 @@
 using BardBot.Common;
-using BardBot.Discord.Database;
-using BardBot.Discord.Exporting;
+using BardBot.Discord.Common;
 using BardBot.Discord.Exporting.TextChannel;
 
 using Discord.Interactions;

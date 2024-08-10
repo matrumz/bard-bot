@@ -1,4 +1,4 @@
-namespace BardBot.Discord.Database.Models;
+namespace BardBot.Discord.Exporting;
 
 public class ChatExportHistory
 {

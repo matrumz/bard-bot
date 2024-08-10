@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BardBot.Discord;
+namespace BardBot.Discord.Common;
 
 internal partial record DiscordOptions
 {

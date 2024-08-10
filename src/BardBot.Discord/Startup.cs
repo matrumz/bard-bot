@@ -1,7 +1,8 @@
 using BardBot.Common.Hosting;
 using BardBot.Common.Hosting.Extensions;
-using BardBot.Discord.Database;
+using BardBot.Discord.Common;
 using BardBot.Discord.Discord;
+using BardBot.Discord.Exporting;
 using BardBot.Discord.Exporting.TextChannel;
 using BardBot.Discord.Mocks;
 

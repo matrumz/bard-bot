@@ -1,8 +1,8 @@
-using BardBot.Discord.Database;
-using BardBot.Discord.Database.Models;
+using BardBot.Discord.Exporting;
 
 namespace BardBot.Discord.Mocks
 {
+    using BardBot.Discord.Common;
 
     internal class MockChatExportHistoryRepository(
         DiscordOptions discordOptions
@@ -19,7 +19,7 @@ namespace BardBot.Discord.Mocks
 
 }
 
-namespace BardBot.Discord
+namespace BardBot.Discord.Common
 {
 
     internal partial record DiscordOptions

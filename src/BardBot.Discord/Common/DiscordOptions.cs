@@ -1,4 +1,4 @@
-namespace BardBot.Discord;
+namespace BardBot.Discord.Common;
 
 internal partial record DiscordOptions
 {

@@ -1,6 +1,6 @@
 using BardBot.Common.Models;
 
-namespace BardBot.Discord.Database.Models;
+namespace BardBot.Discord.Common;
 
 public class Campaign
 {

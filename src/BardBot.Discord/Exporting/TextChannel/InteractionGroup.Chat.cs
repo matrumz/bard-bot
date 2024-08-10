@@ -2,7 +2,6 @@ using System.Text;
 
 using BardBot.Common.Extensions;
 using BardBot.Common;
-using BardBot.Discord.Database.Models;
 using BardBot.Discord.Exporting.PathTokens;
 using BardBot.Discord.Exporting.TextChannel;
 
@@ -14,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using BardBot.Discord.Common;
 
 // Ignore the directory/namespace mismatch: this is an extension of the grouped class
 #pragma warning disable IDE0130
