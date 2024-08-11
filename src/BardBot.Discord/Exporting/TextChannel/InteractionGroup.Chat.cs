@@ -15,8 +15,6 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using BardBot.Discord.Common;
 
-// Ignore the directory/namespace mismatch: this is an extension of the grouped class
-#pragma warning disable IDE0130
 namespace BardBot.Discord.Exporting;
 
 public partial class InteractionGroup

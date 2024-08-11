@@ -23,6 +23,7 @@ namespace BardBot.Discord.Tests.Unit
     }
 }
 
+#pragma warning disable IDE0130
 namespace BardBot.Discord.Tests.Generators
 {
     public partial class TemplateTokensResultGenerator
@@ -37,6 +38,16 @@ namespace BardBot.Discord.Tests.Generators
                     Token.Character("maud"),
                     Token.Before(new DateTime(2022, 2, 22, 20, 0, 0)),
                     Token.After(new DateTime(2022, 2, 22, 20, 0, 0)),
+                },
+                "/ttrpg/campaigns/are-we-excited/sessions/2022-02-22-2000__2022-02-22-2000/transcripts/maud.txt"
+            };
+            yield return new object[]
+            {
+                "/ttrpg/campaigns/are-we-excited/sessions/{before,:yyyy-MM-dd-HHmm}__{after,:yyyy-MM-dd-HHmm}/transcripts/{character,=common}.txt",
+                new List<Token>
+                {
+                    Token.From("channel", "testChannel"),
+                    Token.From("extension", ".txt")
                 },
                 "/ttrpg/campaigns/are-we-excited/sessions/2022-02-22-2000__2022-02-22-2000/transcripts/maud.txt"
             };
