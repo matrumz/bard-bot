@@ -1,4 +1,4 @@
-using BardBot.Discord.Discord.Extensions;
+using BardBot.Discord.Discord;
 
 using Discord;
 

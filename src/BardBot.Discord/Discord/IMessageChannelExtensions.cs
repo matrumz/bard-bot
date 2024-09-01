@@ -1,7 +1,7 @@
 using Discord;
 using Discord.WebSocket;
 
-namespace BardBot.Discord.Discord.Extensions;
+namespace BardBot.Discord.Discord;
 
 public static class IMessageChannelExtensions
 {
