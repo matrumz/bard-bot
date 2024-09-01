@@ -4,6 +4,7 @@
         "Devcontainer",
         "formattable",
         "Postamble",
+        "Scriban",
         "Serilog"
     ],
     "editor.formatOnSave": true,

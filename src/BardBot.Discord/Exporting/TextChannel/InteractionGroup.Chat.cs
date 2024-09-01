@@ -2,7 +2,6 @@ using System.Text;
 
 using BardBot.Common.Extensions;
 using BardBot.Common;
-using BardBot.Discord.Exporting.PathTokens;
 using BardBot.Discord.Exporting.TextChannel;
 
 using Discord;
@@ -14,6 +13,7 @@ using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using BardBot.Discord.Common;
+using Scriban;
 
 namespace BardBot.Discord.Exporting;
 
@@ -23,6 +23,9 @@ public partial class InteractionGroup
     private DateTime? LastChatExport => _lastChatExport ??= chatExportHistoryRepository.LastChatExport(Context.Guild.Id);
 
     private Campaign? Campaign => campaignRepository.Get(Context.Guild.Id);
+
+    private Template ChatExportPathTemplate
+        => Template.Parse(Campaign?.ExportPathTemplates?.Chats ?? throw new InvalidOperationException("No chat export path template found."));
 
     [SlashCommand("chat", "Configured channels & threads.")]
     public async Task ExportChatAsync() =>
@@ -163,12 +166,14 @@ public partial class InteractionGroup
                 .Select(((Channel channel, AfterBeforeDate range) tuple) =>
                 {
                     // build export path
-                    var tokens = new List<Token>();
-                    tuple.channel.Character.IfNotNull(character => tokens.Add(Token.Character(character)));
-                    tokens.Add(Token.After(tuple.range.After));
-                    tokens.Add(Token.Before(tuple.range.Before));
-                    tokens.Add(Token.Extension(ExportFormat.PlainText.GetFileExtension())); // TODO: support other formats
-                    var file = new FileInfo(Campaign.ExportPathTemplates?.Chats?.ApplyTokens(tokens) ?? throw new InvalidOperationException("No chat export path template found."));
+                    ExportFilePathModel pathModel = new()
+                    {
+                        After = tuple.range.After,
+                        Before = tuple.range.Before,
+                        Extension = ExportFormat.PlainText.GetFileExtension() // TODO: support other formats
+                    };
+                    tuple.channel.Character.IfNotNull(character => pathModel.Character = character);
+                    var file = new FileInfo(ChatExportPathTemplate.Render(pathModel));
 
                     // assemble export context
                     return new ExportContext(
