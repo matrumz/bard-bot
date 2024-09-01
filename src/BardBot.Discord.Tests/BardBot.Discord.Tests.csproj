@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BardBot.Discord\BardBot.Discord.csproj" />
+    <ProjectReference Include="..\BardBot\BardBot.csproj" />
   </ItemGroup>
 
 </Project>
