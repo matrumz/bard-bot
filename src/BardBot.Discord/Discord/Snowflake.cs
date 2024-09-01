@@ -2,7 +2,11 @@ using Discord;
 
 namespace BardBot.Discord.Discord;
 
-public partial record Snowflake(ulong Value);
+public partial record Snowflake(ulong Value)
+{
+    public static readonly Snowflake MinValue = new(DateTime.MinValue);
+    public static readonly Snowflake MaxValue = new(Value: 9223372036854775807); // Was determined after receiving an error from Discord indicating that DateTime.MaxValue was too large
+}
 
 // As ulong
 public partial record Snowflake

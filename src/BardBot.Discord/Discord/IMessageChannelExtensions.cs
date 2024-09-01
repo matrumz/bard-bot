@@ -14,8 +14,8 @@ public static class IMessageChannelExtensions
         RequestOptions? options = null
     )
     {
-        after ??= DateTime.MinValue;
-        before ??= DateTime.MaxValue;
+        after ??= Snowflake.MinValue;
+        before ??= Snowflake.MaxValue;
         ulong scanStart = SnowflakeUtils.ToSnowflake(after.Value);
         var done = false;
         do
